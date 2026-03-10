@@ -1,0 +1,17 @@
+.button {
+    border-radius: 10px;
+    padding: 2%;
+    font-size: 20px;
+    margin: 5%;
+    width: 440px;
+    height: 45px;
+    background-color: #EBEBEB;
+    border: none;
+    outline: none;
+    color: black;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #D6D6D6; /* Добавил для красоты */
+}

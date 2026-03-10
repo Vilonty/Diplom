@@ -1,0 +1,70 @@
+.card {
+  background-color: #A1A1A1;
+  padding: 1%;
+  width: 200px;
+  height: 65px;
+  border-radius: 10px;
+  color: black;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.authorChip {
+  background-color: #A1A1A1;
+  height: 35px;
+  width: 150px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.authorAvatar {
+  background-color: #4C4C4C;
+  height: 30px;
+  width: 30px;
+  border-radius: 20px;
+  margin-left: 3px;
+}
+
+.authorName {
+  margin-left: 3px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.description {
+  margin: 5px 0 0 0;
+}
+
+.surveyBadge {
+  color: #666;
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+.stats {
+  padding: 1%;
+  font-size: 15px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #000000;
+  border: none;
+  margin: 0;
+}
+
+.statsRow {
+  margin-top: 1px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.statItem {
+  margin: 0;
+}

@@ -1,0 +1,38 @@
+.chip {
+    height: 50px;
+    width: 155px;
+    padding: 0 20px;
+    background-color: #D9D9D9;
+    border-radius: 10px;
+    color: black;
+    font-size: 30px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.chip:hover {
+    opacity: 0.8;
+}
+
+/* Тип: тег (слева) */
+.tag {
+    margin-right: 10px;
+}
+
+/* Тип: фильтр (справа) */
+.filter {
+    height: 50px;
+    width: 60px;
+    background-color: #c0c0c0; 
+}
+
+
+.active {
+    background-color: #7E7E7E;
+    color: white;
+}

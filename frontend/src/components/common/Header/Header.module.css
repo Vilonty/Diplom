@@ -1,0 +1,55 @@
+.header {
+  height: 80px;
+  background-color: #D9D9D9;
+  font-size: 20px;
+  color: black;
+  padding: 1rem;
+  position: sticky;
+  display: flex;
+  top: 0;
+  z-index: 1000;
+}
+
+.container {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.logo {
+  color: black;
+  text-decoration: none;
+  font-size: 32px;
+}
+
+.nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4rem;
+}
+
+.navLink {
+  color: black;
+  text-decoration: none;
+}
+
+.loginButton {
+  height: 40px;
+  width: 120px;
+  background-color: #7E7E7E;
+  font-size: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  margin-left: auto;
+  margin-right: 1rem;
+}
