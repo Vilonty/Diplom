@@ -12,11 +12,11 @@ User = get_user_model()
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]  # ← Убедитесь, что это есть
+    permission_classes = [AllowAny] 
 
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]  # ← Убедитесь, что это есть
+    permission_classes = [AllowAny] 
     
     def post(self, request):
         login = request.data.get('login')
