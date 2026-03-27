@@ -5,14 +5,21 @@ interface AuthButtonProps {
     children: React.ReactNode;
     type?: 'button' | 'submit' | 'reset';
     onClick?: () => void;
+    disabled?: boolean; 
 }
 
-const AuthButton = ({ children, type = 'button', onClick }: AuthButtonProps) => {
+const AuthButton = ({ 
+    children, 
+    type = 'button', 
+    onClick,
+    disabled = false  
+}: AuthButtonProps) => {
     return (
         <button 
             className={styles.button}
             type={type}
             onClick={onClick}
+            disabled={disabled}  
         >
             {children}
         </button>

@@ -4,9 +4,9 @@ import styles from "./BaseAuthLayout.module.css";
 
 interface BaseAuthLayoutProps {
     title: string;
-    children: React.ReactNode;
     linkTo: string;
     linkText: string;
+    children: React.ReactNode;
 }
 
 const BaseAuthLayout = ({ title, children, linkTo, linkText }: BaseAuthLayoutProps) => {
