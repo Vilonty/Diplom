@@ -1,0 +1,212 @@
+@import "../../../style/variables.css";
+
+.createPage {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.createContainer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2 {
+    font-size: 40px;
+    color: black;
+    text-transform: lowercase;
+    text-align: center;
+    margin: 0 0 20px 0;
+    font-weight: bold;
+}
+
+.createForm {
+    width: 100%;
+}
+
+.formGroup {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.labelRow span:first-child,
+.groupLabel {
+    font-size: 30px;
+    font-weight: bold;
+    color: black;
+    text-transform: lowercase;
+}
+
+.labelRow span:last-child {
+    font-size: 12px;
+    color: #555;
+}
+
+.formGroup input,
+.formGroup textarea {
+    width: 100%;
+    padding: 12px;
+    background: #D8C3A5;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    font-size: 14px;
+    color: black;
+}
+
+.formGroup textarea {
+    resize: vertical;
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+    color: #555;
+}
+
+.coverUpload {
+    width: 240px;
+    height: 240px;
+    background: #D8C3A5;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 10px auto 0 auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.coverUpload img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.plusIcon {
+    font-size: 60px;
+    color: black;
+    font-weight: bold;
+}
+
+.rowButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.rowButtons button,
+.topicsGrid button {
+    padding: 14px;
+    background: #D8C3A5;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.rowButtons button.active,
+.topicsGrid button.active {
+    background: #BE8F4C;
+    color: black;
+}
+
+.topicsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 14px;
+    background: transparent !important;
+    color: black !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 40px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.submitBtn:hover {
+    color: #BE8F4C !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.submitBtn:focus,
+.submitBtn:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.imagePreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.checkboxLabel input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkboxLabel span {
+    font-weight: normal;
+    font-size: 14px;
+    color: black;
+}
+
+@media (max-width: 768px) {
+    .createContainer {
+        padding: 15px;
+    }
+    
+    h2 {
+        font-size: 28px;
+    }
+    
+    .labelRow span:first-child,
+    .groupLabel {
+        font-size: 22px;
+    }
+    
+    .submitBtn {
+        font-size: 32px;
+    }
+}

@@ -1,0 +1,102 @@
+.createPage {
+    min-height: 100vh;
+    background-color: #EAE7DC;
+    display: flex;
+    flex-direction: column;
+}
+
+.createContainer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    flex: 1;  /* Добавь - заставляет контент растягиваться */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Центрирует контент по вертикали */
+}
+
+.createMainBlockContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    flex-direction: column;
+    width: 100%;
+    margin: 30px 0;
+}
+
+.createMainBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    width: 1213px;
+    height: 160px;
+    background-color: #D8C3A5;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    gap: 10px;
+}
+
+.createMainBlock:hover {
+    background-color: #BE8F4C;
+    transform: translateY(-5px);
+}
+
+.createMainBlockTitle {
+    font-size: 50px;
+    font-weight: bold;
+    color: black;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.createMainBlockDescription p {
+    color: black;
+    font-size: 16px;
+    margin: 3px 0;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 1300px) {
+    .createMainBlock {
+        width: 90%;
+        height: 140px;
+    }
+    
+    .createMainBlockTitle {
+        font-size: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .createMainBlockContainer {
+        margin: 20px 0;
+        gap: 25px;
+    }
+    
+    .createMainBlock {
+        width: 95%;
+        height: 120px;
+    }
+    
+    .createMainBlockTitle {
+        font-size: 32px;
+    }
+    
+    .createMainBlockDescription p {
+        font-size: 12px;
+    }
+    
+    h2 {
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+}

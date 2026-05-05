@@ -1,0 +1,559 @@
+.questionBuilder {
+    margin-top: 20px;
+}
+
+.questionBlock {
+    background: #D8C3A5;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.questionHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.questionHead h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+    text-transform: lowercase;
+}
+
+.deleteBtn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.deleteBtn:hover {
+    transform: scale(1.2);
+}
+
+.questionInner {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.questionLeft {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.questionLeft span {
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+}
+
+.smallUpload {
+    width: 120px;
+    height: 120px;
+    background: #BE8F4C;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.smallUpload:hover {
+    opacity: 0.8;
+}
+
+.smallUpload img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.smallPlus {
+    font-size: 40px;
+    color: black;
+    font-weight: bold;
+}
+
+.poolBtn {
+    width: 100%;
+    padding: 10px;
+    background: #BE8F4C !important;
+    color: black !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.poolBtn:hover {
+    opacity: 0.8;
+}
+
+.questionRight {
+    flex: 2;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.questionRight span {
+    font-weight: bold;
+    font-size: 14px;
+    color: black;
+}
+
+.questionRight input {
+    background: #FFD79D;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    color: black;
+}
+
+.questionRight input:disabled {
+    opacity: 0.6;
+    background: #e8c88a;
+}
+
+.answersBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.checkboxLabel input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkboxLabel span {
+    font-weight: normal;
+    font-size: 14px;
+    color: black;
+}
+
+.imagePreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.addQuestionBtn {
+    width: 100%;
+    padding: 14px;
+    background: transparent !important;
+    color: black !important;
+    border: none;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.addQuestionBtn:hover {
+    color: #BE8F4C !important;
+}
+
+/* Модальные окна */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.createPoolModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.poolModal {
+    background-color: #D8C3A5;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-size: 22px;
+    color: black;
+}
+
+.closeModalBtn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: black;
+    padding: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.closeModalBtn:hover {
+    opacity: 0.7;
+}
+
+.backBtn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: black;
+    padding: 5px;
+    margin-right: 10px;
+    transition: opacity 0.3s ease;
+}
+
+.backBtn:hover {
+    opacity: 0.7;
+}
+
+.poolsList {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.poolCard {
+    background-color: rgba(255, 215, 157, 0.5);
+    border-radius: 10px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.poolCard:hover {
+    background-color: rgba(255, 215, 157, 0.8);
+    transform: translateX(5px);
+    border-color: #BE8F4C;
+}
+
+.poolCard.selected {
+    background-color: rgba(190, 143, 76, 0.3);
+    border-color: #BE8F4C;
+}
+
+.poolCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.poolCardHeader h4 {
+    margin: 0;
+    font-size: 18px;
+    color: black;
+}
+
+.questionsCount {
+    font-size: 12px;
+    color: #666;
+}
+
+.poolDescription {
+    margin: 0;
+    font-size: 14px;
+    color: black;
+}
+
+.createPoolBtn {
+    margin: 10px 20px 0 20px;
+    padding: 12px;
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.createPoolBtn:hover {
+    background-color: #a47a3f;
+    transform: translateY(-2px);
+}
+
+.questionsList {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.poolQuestionCard {
+    background-color: rgba(255, 215, 157, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.poolQuestionCard:hover {
+    background-color: rgba(255, 215, 157, 0.8);
+    transform: translateX(5px);
+}
+
+.questionCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.questionNumber {
+    font-size: 14px;
+    color: #666;
+    font-weight: bold;
+}
+
+.selectQuestionBtn {
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: black;
+    font-weight: bold;
+}
+
+.selectQuestionBtn:hover {
+    background-color: #a47a3f;
+}
+
+.questionCardText {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: black;
+    font-weight: bold;
+}
+
+.answersPreview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.previewAnswer {
+    font-size: 13px;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    color: black;
+}
+
+.previewAnswer.correct {
+    background-color: rgba(76, 175, 80, 0.3);
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.poolDescriptionFull {
+    padding: 0 20px;
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: black;
+}
+
+.createPoolModal {
+    background-color: #D8C3A5;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.createPoolModal h3 {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    color: black;
+    text-align: center;
+}
+
+.createPoolModal input,
+.createPoolModal textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #BE8F4C;
+    border-radius: 8px;
+    background-color: #EAE7DC;
+    box-sizing: border-box;
+    color: black;
+}
+
+.createPoolModal input::placeholder,
+.createPoolModal textarea::placeholder {
+    color: #666;
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cancelBtn {
+    padding: 8px 20px;
+    background-color: #999;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.confirmBtn {
+    padding: 8px 20px;
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    color: black;
+    transition: opacity 0.3s ease;
+}
+
+.cancelBtn:hover,
+.confirmBtn:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .questionInner {
+        flex-direction: column;
+    }
+    
+    .addQuestionBtn {
+        font-size: 32px;
+    }
+    
+    .poolModal {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .modalHeader h3 {
+        font-size: 18px;
+    }
+    
+    .poolCardHeader h4 {
+        font-size: 16px;
+    }
+    
+    .questionCardText {
+        font-size: 14px;
+    }
+    
+    .createPoolModal {
+        width: 95%;
+    }
+}
+
+
+.createPoolBtn {
+    margin: 10px 20px 20px 20px;  /* Увеличил нижний отступ */
+    padding: 12px;
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 8px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 0 20px 25px 20px;  /* Добавил нижний отступ */
+}
+
+.poolsList {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    padding-bottom: 10px;  /* Добавил */
+}
+
+/* Для модального окна добавления в пул */
+.poolModal .modalButtons {
+    margin-top: 10px;
+    padding: 0 20px 25px 20px;
+}

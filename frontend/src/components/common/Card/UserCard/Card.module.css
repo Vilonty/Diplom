@@ -1,70 +1,92 @@
-.card {
-  background-color: #A1A1A1;
-  padding: 1%;
-  width: 200px;
-  height: 65px;
-  border-radius: 10px;
-  color: black;
+/* Card.module.css */
+
+.cardLink {
+  text-decoration: none;
+  display: block;
 }
-.image {
+
+.card {
+  background-color: #BE8F4C;
+  padding: 6px 10px;
+  width: 180px;
+  border-radius: 8px;
+  color: black;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Блок автора */
+.authorBlock {
+  margin-bottom: 4px;
+}
+
+.authorChip {
+  background-color: #BE8F4C;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Аватар */
+.authorAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #4C4C4C;
+}
+
+.avatarImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.authorChip {
-  background-color: #A1A1A1;
-  height: 35px;
-  width: 150px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
+  display: block;
 }
 
-.authorAvatar {
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
   background-color: #4C4C4C;
-  height: 30px;
-  width: 30px;
-  border-radius: 20px;
-  margin-left: 3px;
 }
 
+/* Имя автора */
 .authorName {
-  margin-left: 3px;
-}
-
-.title {
   margin: 0;
-  font-size: 1.5rem;
+  color: #000000;
+  font-weight: 700;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
-.description {
-  margin: 5px 0 0 0;
-}
-
-.surveyBadge {
-  color: #666;
-  font-size: 14px;
-  margin: 5px 0 0 0;
-}
-
+/* Статистика - УВЕЛИЧЕННЫЙ ШРИФТ */
 .stats {
-  padding: 1%;
-  font-size: 15px;
-}
-
-.divider {
-  height: 1px;
-  background-color: #000000;
-  border: none;
-  margin: 0;
+  padding-top: 4px;
+  font-size: 14px;
 }
 
 .statsRow {
-  margin-top: 1px;
   display: flex;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .statItem {
   margin: 0;
+  color: #000000;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }

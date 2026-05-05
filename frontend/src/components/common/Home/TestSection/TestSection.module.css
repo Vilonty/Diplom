@@ -1,18 +1,196 @@
 .section {
-  background-color: white;
+  background-color: #EAE7DC;
   padding: 0px 133px 27px 133px;
 }
-
 
 .title {
   color: black;
   font-size: 40px;
-  margin-bottom: 35px;
-  font-weight: 100;
+  margin-bottom: 25px;
+  margin-top: 0;
+  font-weight: 700;
+  text-align: left;
+  letter-spacing: normal;
+  font-family: 'Arial', sans-serif;
+}
+
+.wrapper {
+  position: relative;
+  overflow: visible;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+/* Чтобы вмещалось максимум 4 карточки */
+.grid > * {
+  flex: 0 0 auto;
+  width: calc(25% - 22.5px);
+  min-width: 250px;
+  scroll-snap-align: start;
+}
+
+/* Скрываем скроллбар */
+.grid::-webkit-scrollbar {
+  display: none;
+}
+
+.grid {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollButtonLeft,
+.scrollButtonRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 48px;
+  cursor: pointer;
+  color: black;
+  z-index: 10;
+  padding: 10px;
+  outline: none;
+}
+
+.scrollButtonLeft:focus,
+.scrollButtonRight:focus {
+  outline: none;
+}
+
+.scrollButtonLeft:active,
+.scrollButtonRight:active {
+  outline: none;
+}
+
+.scrollButtonLeft {
+  left: -60px;
+}
+
+.scrollButtonRight {
+  right: -60px;
+}
+
+.scrollButtonLeft:hover,
+.scrollButtonRight:hover {
+  opacity: 0.7;
+}
+
+/* ========== АДАПТИВ ДЛЯ ПЛАНШЕТОВ (до 1024px) ========== */
+@media (max-width: 1024px) {
+  .section {
+    padding: 0px 60px 27px 60px;
+  }
+  
+  .title {
+    font-size: 40px;
+  }
+  
+  .grid {
+    gap: 20px;
+  }
+  
+  .grid > * {
+    width: calc(33.333% - 14px);
+  }
+  
+  .scrollButtonLeft {
+    left: -50px;
+  }
+  
+  .scrollButtonRight {
+    right: -50px;
+  }
+}
+
+/* ========== ТОЛЬКО МОБИЛЬНЫЕ СТИЛИ (до 768px) - НЕ ТРОГАЮ ДЕСКТОП ========== */
+@media (max-width: 768px) {
+  .section {
+    padding: 20px 0 20px 0;
+  }
+  
+  .title {
+    font-size: 40px;
+    margin-bottom: 20px;
+    margin-left: 16px;
+  }
+  
+  .wrapper {
+    overflow: hidden;
+  }
+  
+  .grid {
+    gap: 60px;
+    padding: 0;
+  }
+  
+  .grid > * {
+    width: 350px;
+    min-width: 350px;
+    scroll-snap-align: center;
+    margin: 0;
+  }
+  
+  .grid > *:first-child {
+    margin-left: calc(50% - 175px);
+  }
+  
+  .grid > *:last-child {
+    margin-right: calc(50% - 175px);
+  }
+  
+  .scrollButtonLeft,
+  .scrollButtonRight {
+    display: flex !important;
+    font-size: 32px;
+    color: ;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    left: 8px;
+  }
+  
+  .scrollButtonRight {
+    left: auto;
+    right: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    gap: 50px;
+  }
+  
+  .grid > * {
+    width: 310px;
+    min-width: 310px;
+  }
+  
+  .grid > *:first-child {
+    margin-left: calc(50% - 155px);
+  }
+  
+  .grid > *:last-child {
+    margin-right: calc(50% - 155px);
+  }
+  
+  .scrollButtonLeft,
+  .scrollButtonRight {
+    font-size: 28px;
+    width: 32px;
+    height: 32px;
+    left: 4px;
+  }
+  
+  .scrollButtonRight {
+    left: auto;
+    right: 4px;
+  }
 }

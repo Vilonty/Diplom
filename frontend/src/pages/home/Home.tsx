@@ -4,27 +4,30 @@ import SearchSection from '../../components/common/Search/SearchSection/SearchSe
 import TestSection from '../../components/common/Home/TestSection/TestSection'
 import ActiveUsers from '../../components/common/Home/ActiveUsers/UsersSection'
 import Footer from '../../components/common/Footer/Footer';
+import styles from './Home.module.css';
 
 const Home = () => {
   return (
     <div>
         <Header />
 
-            <main>
+        <main>
+          
+          {/* Блок поиска */}
+          <div className={styles.hideOnMobile}>
+            <SearchSection showTypeSelector={false} />
+          </div>
 
-                {/* Блок поиска */}
-                <SearchSection/>
+          {/* Блок тесты - только тесты */}
+          <TestSection title="ТЕСТЫ" type="recent" />
 
-                {/* Блок тесты */}
-                <TestSection title="ТЕСТЫ"/>
+          {/* Блок опросы - только опросы */}
+          <TestSection title="ОПРОСЫ" type="surveys" />
 
-                {/* Блок опросы */}
-                <TestSection title="ОПРОСЫ"/>
-
-                {/* Блок авторы */}
-                <ActiveUsers title="АКТИВНЫЕ ПОЛЬЗОВАТЕЛИ"/>
-                
-            </main>
+          {/* Блок авторы */}
+          <ActiveUsers title="АКТИВНЫЕ ПОЛЬЗОВАТЕЛИ"/>
+          
+        </main>
         
         <Footer />
     </div>

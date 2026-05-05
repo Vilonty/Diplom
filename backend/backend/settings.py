@@ -1,7 +1,14 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Максимальный размер загружаемого файла (5MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 SECRET_KEY = 'django-insecure-298@lp=r1fl28m45qe*n9=3i19*0%o@j+7^#g%4-z-pkgfpljl'
 
@@ -17,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication',
+    'tests',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
@@ -96,7 +104,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
 }
 
@@ -109,3 +117,6 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'authentication.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

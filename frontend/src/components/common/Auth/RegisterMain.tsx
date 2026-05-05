@@ -58,12 +58,13 @@ const RegisterMain = () => {
                 <label className={styles.checkboxLabel}>
                     <input
                         type="checkbox"
-                        name="subscribe"
-                        value="yes"
+                        name="subscribe"  
+                        checked={formData.subscribe}  
+                        onChange={handleChange}  
                         className={styles.checkbox}
                     />
                     <span className={styles.checkboxText}>
-                        обработка персональных данных
+                        Я согласен на обработку персональных данных
                     </span>
                 </label>
 

@@ -1,5 +1,5 @@
 .footer {
-  background-color: #D9D9D9;
+  background-color: #D8C3A5;
   color: black;
   padding: 20px 30px;
   display: flex;
@@ -24,10 +24,34 @@
   font-weight: normal;
 }
 
-.info h3:nth-child(3) {
+/* Строка для СОЦ СЕТИ: и иконок справа */
+.socialRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.info .socialRow h3 {
   font-size: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   font-weight: normal;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 10px;
+}
+
+.socialIcon {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.socialIcon:hover {
+  opacity: 0.8;
 }
 
 .nav {
@@ -47,4 +71,61 @@
 
 .nav li {
   margin-bottom: 10px;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.socialIcon {
+  display: inline-flex;
+  transition: transform 0.2s ease;
+}
+
+.socialIcon:hover {
+  transform: scale(1.1);
+}
+
+.socialIcon img {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+
+/* ========== АДАПТИВ ДЛЯ ТЕЛЕФОНОВ (до 768px) ========== */
+@media (max-width: 768px) {
+  .footer {
+    padding: 20px;
+  }
+  
+  /* Скрываем блок с навигацией (тесты, опросы, создать) */
+  .nav {
+    display: none;
+  }
+  
+  /* Информация занимает всю ширину */
+  .info {
+    width: 100%;
+  }
+  
+  .info h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .info h3:nth-child(2) {
+    font-size: 16px;
+  }
+  
+  .info .socialRow h3 {
+    font-size: 16px;
+  }
+  
+  .socialIcon {
+    width: 30px;
+    height: 30px;
+  }
 }

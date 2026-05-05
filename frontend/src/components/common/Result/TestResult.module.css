@@ -1,0 +1,390 @@
+.testResult {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #EAE7DC;
+    min-height: 100vh;
+}
+
+.mainResultBlock {
+    background-color: #D8C3A5;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.testName {
+    text-align: center;
+}
+
+.testName h3 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #000;
+    margin: 0 0 20px 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.statsResult {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.statsResult > span {
+    font-size: 25px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.typeBadge {
+    font-size: 25px;
+    font-weight: 700;
+    color: #000;
+    padding: 6px 20px;
+    text-align: center;
+    display: block;
+    width: fit-content;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.resultResult {
+    text-align: center;
+    padding: 30px;
+}
+
+.resultPercent {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: #000;
+}
+
+.resultText {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+}
+
+.ratingSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.ratingSection span {
+    color: #000;
+    font-size: 16px;
+}
+
+.stars {
+    display: flex;
+    gap: 8px;
+}
+
+.star {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    -webkit-text-stroke: 2px #000;
+    text-stroke: 2px #000;
+    paint-order: stroke fill;
+}
+
+.star.active {
+    color: #ffc107;
+    -webkit-text-stroke: 2px #000;
+}
+
+.star:hover {
+    color: #ffc107;
+    -webkit-text-stroke: 2px #000;
+}
+
+.star:focus {
+    outline: none;
+}
+
+.commentSections {
+    background-color: #D8C3A5;
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.commentTitle {
+    font-size: 24px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+.commentForm {
+    margin-bottom: 30px;
+}
+
+.formTitle {
+    display: block;
+    font-size: 14px;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.commentForm form {
+    display: flex;
+    gap: 10px;
+}
+
+.commentInput {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    background-color: #FFD79D;
+    color: #000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.commentInput:focus {
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.commentInput::placeholder {
+    color: #666;
+}
+
+.submitButton {
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+    outline: none;
+}
+
+.submitButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.submitButton:hover {
+    background-color: #a47a3f;
+}
+
+.commentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.commentItem {
+    background-color: #FFD79D;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.commentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.commentAuthor {
+    font-weight: bold;
+    color: #000;
+    font-size: 14px;
+}
+
+.commentDate {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.commentText {
+    font-size: 14px;
+    color: #000;
+    line-height: 1.4;
+}
+
+.noComments {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.reportCommentButton {
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+    outline: none;
+}
+
+.reportCommentButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.reportCommentButton:hover {
+    background-color: #a47a3f;
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #000;
+}
+
+/* Адаптив для мобильных устройств */
+@media (max-width: 768px) {
+    .testResult { 
+        padding: 20px; 
+    }
+    
+    .mainResultBlock, 
+    .commentSections { 
+        padding: 20px; 
+    }
+    
+    .resultPercent { 
+        font-size: 32px; 
+    }
+    
+    .commentForm form { 
+        flex-direction: column; 
+    }
+    
+    .testName h3 { 
+        font-size: 24px; 
+    }
+    
+    .resultText { 
+        font-size: 18px; 
+    }
+    
+    /* Адаптив для statsResult - перестраиваем в колонку */
+    .statsResult {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        position: static;
+    }
+    
+    .statsResult > span {
+        font-size: 20px;
+        order: 1;
+    }
+    
+    .typeBadge {
+        position: static;
+        left: auto;
+        transform: none;
+        order: 2;
+        font-size: 20px;
+        padding: 4px 16px;
+    }
+    
+    /* Обертка для автора - если есть класс authorWrapper */
+    .statsResult :global(.authorChip),
+    .statsResult > div:last-child {
+        order: 3;
+    }
+    
+    /* Звезды на мобильных */
+    .star {
+        font-size: 28px;
+        -webkit-text-stroke: 1.5px #000;
+    }
+    
+    .ratingSection {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .resultResult {
+        padding: 20px;
+    }
+}
+
+/* Для совсем маленьких экранов */
+@media (max-width: 480px) {
+    .testResult {
+        padding: 15px;
+    }
+    
+    .mainResultBlock,
+    .commentSections {
+        padding: 15px;
+    }
+    
+    .testName h3 {
+        font-size: 20px;
+    }
+    
+    .statsResult > span,
+    .typeBadge {
+        font-size: 18px;
+    }
+    
+    .resultPercent {
+        font-size: 28px;
+    }
+    
+    .resultText {
+        font-size: 16px;
+    }
+    
+    .star {
+        font-size: 24px;
+        -webkit-text-stroke: 1.5px #000;
+    }
+    
+    .commentTitle {
+        font-size: 20px;
+    }
+    
+    .submitButton {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    .commentInput {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}

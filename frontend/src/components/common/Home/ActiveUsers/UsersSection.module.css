@@ -1,18 +1,178 @@
 .section {
-  background-color: white;
+  background-color: #EAE7DC;
   padding: 0px 133px 27px 133px;
 }
 
-
 .title {
   color: black;
-  font-size: 40px;
-  margin-bottom: 35px;
-  font-weight: 100;
+  font-size: 20px;
+  margin-bottom: 25px;
+  margin-top: 0;
+  font-weight: 700;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+}
+
+.wrapper {
+  position: relative;
+  overflow: visible;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 2px;
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+}
+
+/* ВАЖНО: переопределяем ширину карточки, но сохраняем отступы */
+.grid > * {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
+}
+
+.grid {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollButtonLeft,
+.scrollButtonRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 48px;
+  cursor: pointer;
+  color: black;
+  z-index: 10;
+  padding: 10px;
+}
+
+.scrollButtonLeft:active,
+.scrollButtonRight:active {
+  outline: none;
+  border: none;
+  background: none;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.scrollButtonLeft:focus,
+.scrollButtonRight:focus {
+  outline: none;
+}
+
+.scrollButtonLeft {
+  left: -60px;
+}
+
+.scrollButtonRight {
+  right: -60px;
+}
+
+.scrollButtonLeft:hover,
+.scrollButtonRight:hover {
+  opacity: 0.7;
+}
+
+/* Планшет */
+@media (max-width: 1024px) {
+  .section {
+    padding: 0px 60px 27px 60px;
+  }
+  
+  .grid {
+    gap: 24px;
+  }
+  
+  .scrollButtonLeft {
+    left: -50px;
+  }
+  
+  .scrollButtonRight {
+    right: -50px;
+  }
+}
+
+/* Мобильный */
+@media (max-width: 768px) {
+  .section {
+    padding: 20px 0;
+  }
+  
+  .title {
+    font-size: 18px;
+    margin-bottom: 20px;
+    margin-left: 16px;
+  }
+  
+  .grid {
+    gap: 20px;
+    padding: 0 16px;
+  }
+  
+  .scrollButtonLeft,
+  .scrollButtonRight {
+    font-size: 32px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    left: 8px;
+    padding: 0;
+  }
+  
+  .scrollButtonRight {
+    left: auto;
+    right: 8px;
+  }
+}
+
+/* Маленький телефон */
+@media (max-width: 480px) {
+  .section {
+    padding: 16px 0;
+  }
+  
+  .title {
+    font-size: 16px;
+    margin-bottom: 16px;
+    margin-left: 12px;
+  }
+  
+  .grid {
+    gap: 16px;
+    padding: 0 12px;
+  }
+  
+  .scrollButtonLeft,
+  .scrollButtonRight {
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    left: 4px;
+  }
+  
+  .scrollButtonRight {
+    left: auto;
+    right: 4px;
+  }
+}
+
+/* Для 390px */
+@media (max-width: 390px) {
+  .grid {
+    gap: 14px;
+  }
 }

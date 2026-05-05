@@ -1,0 +1,191 @@
+/* src/pages/TestsList/TestsList.module.css */
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #EAE7DC;
+}
+
+.main {
+  flex: 1;
+  padding-top: 30px; /* Добавляем отступ сверху */
+}
+
+.container {
+  max-width: 1648px;
+  margin: 0 auto;
+  padding: 0 0 40px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Сетка карточек - 4 в ряд, как на главной странице */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+/* Карточки растягиваются на всю ширину */
+.cardsGrid > * {
+  width: 100%;
+}
+
+/* Элемент загрузки */
+.loadMore {
+  text-align: center;
+  padding: 20px;
+  color: #000000;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  opacity: 0.7;
+}
+
+/* Статус загрузки */
+.loadingStatus {
+  text-align: center;
+  padding: 15px;
+  color: #000000;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  opacity: 0.6;
+  border-top: 1px solid #D8C3A5;
+  margin-top: 10px;
+}
+
+/* Адаптивность */
+@media (max-width: 1400px) {
+  .container {
+    padding: 0 50px 40px 50px;
+  }
+  
+  .cardsGrid {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .cardsGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .container {
+    padding: 0 30px 40px 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Скрываем SearchSection на мобильных экранах */
+.hideOnMobile {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hideOnMobile {
+    display: none;
+  }
+  
+  .main {
+    padding-top: 20px; /* Уменьшаем отступ на мобильных */
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding-top: 15px; /* Еще меньше на маленьких телефонах */
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #EAE7DC;
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modalTitle {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.topicsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.topicButton {
+  padding: 12px;
+  border: 2px solid #D8C3A5;
+  border-radius: 10px;
+  background-color: #D8C3A5;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.topicButton:hover {
+  background-color: #c9b48c;
+}
+
+.topicButton.active {
+  background-color: #BE8F4C;
+  border-color: #BE8F4C;
+  color: white;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.clearButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.applyButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #BE8F4C;
+  color: white;
+  cursor: pointer;
+}

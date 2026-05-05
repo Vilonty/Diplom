@@ -1,6 +1,6 @@
 .header {
   height: 80px;
-  background-color: #D9D9D9;
+  background-color: #D8C3A5;
   font-size: 20px;
   color: black;
   padding: 1rem;
@@ -8,6 +8,7 @@
   display: flex;
   top: 0;
   z-index: 1000;
+  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.3);
 }
 
 .container {
@@ -18,14 +19,17 @@
   align-items: center;
   position: relative;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  gap: 20px;
 }
 
 .logo {
   color: black;
   text-decoration: none;
   font-size: 32px;
+  white-space: nowrap;
 }
 
+/* Десктопная навигация - по центру */
 .nav {
   position: absolute;
   left: 50%;
@@ -37,12 +41,17 @@
 .navLink {
   color: black;
   text-decoration: none;
+  white-space: nowrap;
 }
 
+.navLink:hover {
+  text-decoration: underline;
+}
+
+/* Десктопная кнопка входа/профиля */
 .loginButton {
   height: 40px;
-  width: 120px;
-  background-color: #7E7E7E;
+  background-color: #BE8F4C;
   font-size: 20px;
   border-radius: 10px;
   display: flex;
@@ -50,6 +59,361 @@
   justify-content: center;
   color: white;
   text-decoration: none;
-  margin-left: auto;
-  margin-right: 1rem;
+  gap: 8px;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
 }
+
+/* Разная ширина в зависимости от состояния */
+.loginButton:not(:has(span)) {
+  width: 40px;  /* Когда только иконка (после входа) */
+}
+
+.loginButton:has(span) {
+  width: 120px; /* Когда есть текст "войти" */
+}
+
+.loginButton:hover {
+  opacity: 0.85;
+}
+
+.loginButton img {
+  height: 25px;
+  width: 30px;
+}
+
+/* Мобильные кнопки - скрыты на десктопе */
+.mobileButtons {
+  display: none;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.searchButton {
+  width: 60px;
+  height: 60px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.profileButton {
+  width: 60px;
+  height: 60px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.burgerButton {
+  width: 60px;
+  height: 60px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.searchButton:active,
+.profileButton:active,
+.burgerButton:active {
+  transform: scale(0.96);
+}
+
+.searchButton svg,
+.profileButton svg,
+.burgerButton svg {
+  width: 28px;
+  height: 28px;
+  stroke: white;
+}
+
+/* Мобильное меню (выезжающее справа) - ФИКСИРОВАННОЕ */
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 280px;
+  height: 100vh;
+  background-color: #D8C3A5;
+  z-index: 2000;
+  transition: right 0.3s ease;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+}
+
+.mobileMenuOpen {
+  right: 0;
+}
+
+.mobileMenuHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.closeMenuButton {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: black;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+}
+
+.mobileNavLink {
+  color: black;
+  text-decoration: none;
+  font-size: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.mobileNavLink:active {
+  background-color: rgba(190, 143, 76, 0.3);
+}
+
+/* Поисковое меню сверху */
+.searchOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.searchMenu {
+  width: 100%;
+  max-height: 100%;
+  background-color: #EAE7DC;
+  animation: slideDown 0.3s ease;
+  overflow-y: auto;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.searchMenuHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  background-color: #EAE7DC;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.closeSearchButton {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: black;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Оверлей (затемнение фона) */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1500;
+}
+
+/* ========== АДАПТИВ ДЛЯ ПЛАНШЕТОВ И НЕБОЛЬШИХ ЭКРАНОВ (951px - 1100px) ========== */
+@media (max-width: 1100px) {
+  .nav {
+    gap: 2rem;
+  }
+  
+  .logo {
+    font-size: 26px;
+  }
+  
+  .loginButton:has(span) {
+    width: 100px;
+    font-size: 18px;
+  }
+}
+
+/* ========== КРИТИЧЕСКАЯ ТОЧКА - КНОПКИ НАЕЗЖАЮТ (до 950px) ========== */
+@media (max-width: 950px) {
+  .container {
+    gap: 15px;
+  }
+  
+  /* Уменьшаем логотип */
+  .logo {
+    font-size: 22px;
+    white-space: nowrap;
+  }
+  
+  /* Уменьшаем расстояние между пунктами навигации */
+  .nav {
+    gap: 1.5rem;
+    position: relative;
+    left: auto;
+    transform: none;
+    margin: 0 auto;
+  }
+  
+  /* Уменьшаем кнопку входа */
+  .loginButton:has(span) {
+    width: 90px;
+    font-size: 16px;
+    height: 36px;
+  }
+  
+  .loginButton:not(:has(span)) {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .loginButton img {
+    height: 20px;
+    width: 24px;
+  }
+}
+
+/* ========== ДЛЯ ЭКРАНОВ 850px И МЕНЕЕ ========== */
+@media (max-width: 850px) {
+  .logo {
+    font-size: 18px;
+  }
+  
+  .nav {
+    gap: 1rem;
+  }
+  
+  .navLink {
+    font-size: 16px;
+  }
+  
+  .loginButton:has(span) {
+    width: 80px;
+    font-size: 14px;
+    height: 34px;
+  }
+  
+  .loginButton:not(:has(span)) {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .loginButton img {
+    height: 18px;
+    width: 22px;
+  }
+}
+
+/* ========== ПЕРЕХОД НА МОБИЛЬНУЮ ВЕРСИЮ (до 768px) ========== */
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    min-height: 80px;
+    padding: 10px 16px;
+  }
+  
+  /* Скрываем логотип в мобильной версии */
+  .logo {
+    display: none;
+  }
+  
+  /* Скрываем десктопную навигацию */
+  .nav {
+    display: none;
+  }
+  
+  /* Скрываем десктопную кнопку входа */
+  .loginButton {
+    display: none;
+  }
+  
+  /* Показываем мобильные кнопки */
+  .mobileButtons {
+    display: flex;
+    margin-left: auto;
+  }
+  
+  /* Кнопка поиска видна только на мобильных */
+  .searchButton {
+    display: flex;
+  }
+}
+
+/* НА ДЕСКТОПЕ КНОПКА ПОИСКА СКРЫТА */
+@media (min-width: 769px) {
+  .searchButton {
+    display: none;
+  }
+}
+
+/* ========== ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ (до 480px) ========== */
+@media (max-width: 480px) {
+  .header {
+    padding: 8px 12px;
+  }
+  
+  .searchButton,
+  .profileButton,
+  .burgerButton {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+  }
+  
+  .searchButton svg,
+  .profileButton svg,
+  .burgerButton svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+

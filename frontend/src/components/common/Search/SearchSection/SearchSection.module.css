@@ -1,14 +1,23 @@
 .section {
-  background-color: #FFFFFF;
+  background-color: #EAE7DC;
   padding: 54px 133px 27px 133px;
   text-align: center;
 }
 
-.searchInput {
-  width: 100%;
+/* Новый wrapper для строки поиска */
+.searchWrapper {
+  display: flex;
+  gap: 15px;
+  align-items: center;
   max-width: 1648px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.searchInput {
+  flex: 1;
   height: 60px;
-  background-color: #D9D9D9;
+  background-color: #D8C3A5;
   border-radius: 20px;
   outline: none;
   border: none;
@@ -17,22 +26,627 @@
   font-size: 30px;
 }
 
+.searchInput::placeholder {
+  font-size: 30px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.searchInput:focus {
+  outline: 2px solid #BE8F4C;
+}
+
+/* Новая кнопка НАЙТИ */
+.searchButton {
+  height: 60px;
+  padding: 0 30px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.searchButton:hover {
+  opacity: 0.85;
+}
+
 .chipContainer {
   width: 100%;
   margin-top: 15px;
   max-width: 1648px;
-  height: 60px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  position: relative;
 }
 
 .tags {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Стили для селектора типа */
+.typeSelector {
+  position: relative;
+}
+
+.typeButton {
+  padding: 8px 24px;
+  font-size: 30px;
+  font-family: Arial, sans-serif;
+  background-color: #D8C3A5;
+  height: 50px;
+  text-align: center;
+  color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.typeButton:hover {
+  background-color: #c9b48c;
+}
+
+/* Выпадающий список */
+.dropdown {
+  position: absolute;
+  top: 65px;
+  left: 0;
+  background-color: #D8C3A5;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  min-width: 120px;
+}
+
+.dropdownItem {
+  padding: 10px 24px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  background-color: transparent;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.dropdownItem:hover {
+  background-color: #BE8F4C;
+}
+
+.dropdownItem.active {
+  background-color: #BE8F4C;
 }
 
 .filters {
   display: flex;
   gap: 10px;
-  margin-left: auto;
+  margin-left: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.rightGroup {
+  display: flex;
+  align-items: center;
+}
+
+/* ========== АДАПТИВ ДЛЯ ПЛАНШЕТОВ (768px - 1024px) ========== */
+@media (max-width: 1024px) {
+  .section {
+    padding: 40px 60px 27px 60px;
+  }
+  
+  .searchInput {
+    font-size: 24px;
+    height: 55px;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 24px;
+  }
+  
+  .searchButton {
+    height: 55px;
+    padding: 0 25px;
+    font-size: 20px;
+  }
+  
+  .typeButton {
+    font-size: 24px;
+    height: 45px;
+    padding: 6px 20px;
+  }
+}
+
+/* ========== АДАПТИВ ДЛЯ МОБИЛЬНЫХ (до 768px) ========== */
+@media (max-width: 768px) {
+  .section {
+    padding: 20px 16px 20px 16px;
+  }
+  
+  .searchWrapper {
+    gap: 10px;
+  }
+  
+  .searchInput {
+    height: 50px;
+    font-size: 18px;
+    padding-left: 16px;
+    border-radius: 15px;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 18px;
+  }
+  
+  .searchButton {
+    height: 50px;
+    padding: 0 20px;
+    font-size: 16px;
+    border-radius: 15px;
+  }
+  
+  .chipContainer {
+    flex-direction: column;
+    height: auto;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  .tags {
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .rightGroup {
+    display: none;
+  }
+  
+  .typeSelector {
+    display: none;
+  }
+}
+
+/* ========== ДЛЯ ЭКРАНОВ 900px (фикс поломанных кнопок) ========== */
+@media (max-width: 900px) {
+  .section {
+    padding: 30px 40px 27px 40px;
+  }
+  
+  .chipContainer {
+    flex-wrap: wrap;
+  }
+  
+  .tags {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .rightGroup {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .filters {
+    justify-content: center;
+  }
+  
+  .typeButton {
+    font-size: 20px;
+    height: 40px;
+    padding: 4px 16px;
+    white-space: nowrap;
+  }
+}
+
+/* ========== ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ (до 480px) ========== */
+@media (max-width: 480px) {
+  .section {
+    padding: 16px 12px 20px 12px;
+  }
+  
+  .searchInput {
+    height: 44px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 16px;
+  }
+  
+  .searchButton {
+    height: 44px;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+  
+  .tags {
+    gap: 6px;
+  }
+}
+
+/* ========== ДЛЯ БОЛЬШИХ ЭКРАНОВ (от 1400px) ========== */
+@media (min-width: 1400px) {
+  .searchInput {
+    font-size: 36px;
+    height: 70px;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 36px;
+  }
+  
+  .searchButton {
+    height: 70px;
+    padding: 0 40px;
+    font-size: 28px;
+  }
+  
+  .typeButton {
+    font-size: 36px;
+    height: 60px;
+  }
+}
+
+/* Стили для поиска пользователей - не влияют на существующий дизайн */
+
+.userSearchContainer {
+  position: relative;
+}
+
+.userSearchDropdown {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  width: 300px;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.userSearchInput {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  outline: none;
+  font-size: 16px;
+}
+
+.userSearchResults {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.userResult {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userResult:hover {
+  background-color: black;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #4C4C4C;
+  flex-shrink: 0;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.userLogin {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.noUsers {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .userSearchDropdown {
+    position: fixed;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 300px;
+  }
+}
+/* Кнопка поиска пользователей - такой же стиль как у кнопки НАЙТИ */
+.userSearchButton {
+  height: 60px;
+  padding: 0 30px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.userSearchButton:hover {
+  opacity: 0.85;
+}
+
+/* Оверлей для модального окна */
+.userResultsOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Модальное окно с результатами */
+.userResultsModal {
+  background-color: #EAE7DC;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.userResultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #D8C3A5;
+  background-color: #D8C3A5;
+}
+
+.userResultsHeader h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #000;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #000;
+  padding: 0 10px;
+}
+
+.closeButton:hover {
+  color: #BE8F4C;
+}
+
+.userResultsList {
+  padding: 15px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.userResultCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background-color: #D8C3A5;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.userResultCard:hover {
+  background-color: #c9b48c;
+  transform: translateX(5px);
+}
+
+.userResultAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #4C4C4C;
+  flex-shrink: 0;
+}
+
+.userResultAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.userResultInfo {
+  flex: 1;
+}
+
+.userResultName {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.userResultLogin {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.userResultStats {
+  font-size: 12px;
+  color: #666;
+}
+
+.loadingUsers {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.noUsers {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  .userSearchButton {
+    height: 50px;
+    padding: 0 20px;
+    font-size: 18px;
+  }
+  
+  .userResultsModal {
+    width: 95%;
+  }
+  
+  .userResultAvatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .userResultName {
+    font-size: 16px;
+  }
+}
+
+/* Кнопка поиска пользователей - такой же стиль как у кнопки НАЙТИ */
+.userSearchButton {
+  height: 60px;
+  padding: 0 30px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 20px;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.userSearchButton:hover {
+  opacity: 0.85;
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 768px) {
+  .userSearchButton {
+    height: 50px;
+    padding: 0 20px;
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .userSearchButton {
+    height: 70px;
+    padding: 0 40px;
+    font-size: 28px;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filters .chip {
+  height: 50px;
+  padding: 8px 24px;
+  font-size: 30px;
+  background-color: #D8C3A5;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .filters .chip {
+    height: 45px;
+    font-size: 24px;
+    padding: 6px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters .chip {
+    height: 40px;
+    font-size: 20px;
+    padding: 4px 16px;
+  }
 }

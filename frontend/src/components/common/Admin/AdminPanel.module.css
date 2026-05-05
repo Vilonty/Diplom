@@ -1,0 +1,400 @@
+/* AdminPanel.module.css */
+@import "../../../style/variables.css";
+
+/* стили для страницы */
+.page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    display: flex;
+    justify-content: center;
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 1700px;
+    max-width: 100%;
+    background-color: var(--color-blockColor);
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+/* стили для хедера */
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    color: #000000;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* стили для кнопок */
+.adminButton {
+    background-color: var(--color-buttonColor);
+    color: #000000;
+    font-weight: bold;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    outline: none;
+}
+
+.adminButton:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.adminButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* стили для фильтров */
+.filterBar {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    background-color: var(--color-blockColor);
+    color: #000000;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.filterBtn:hover {
+    background-color: var(--color-buttonColor);
+    transform: translateY(-2px);
+}
+
+.filterBtn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.activeFilter {
+    background-color: var(--color-buttonColor);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* стили для основного контента */
+.adminMain {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.reportList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* стили для карточек жалоб */
+.reportCard {
+    width: 100%;
+    background-color: rgba(255, 215, 157, 0.5);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.openReport {
+    border-left: 4px solid var(--color-pending, #ff4444);
+}
+
+.reviewedReport {
+    border-left: 4px solid var(--color-reviewed, #ffaa00);
+}
+
+.closedReport {
+    border-left: 4px solid var(--color-resolved, #44aa44);
+}
+
+/* стили для секции пользователя */
+.userSection {
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.userLabel {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.userCardLink {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.userCardLink:hover .userCard {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.userCard {
+    background-color: var(--color-buttonColor);
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.userAvatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-blockColor);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+}
+
+.avatarPlaceholder {
+    display: none;
+}
+
+.avatarPlaceholder.show {
+    display: flex;
+}
+
+.userInfo {
+    flex: 1;
+}
+
+.username {
+    font-weight: bold;
+    color: #000000;
+    font-size: 15px;
+}
+
+.reportDate {
+    font-size: 12px;
+    color: #666;
+}
+
+/* стили для секций тип/причина/статус */
+.reportType, .reportReason, .reportStatus {
+    min-width: 120px;
+    text-align: center;
+}
+
+.label {
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.value {
+    color: #000000;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+/* стили для селекта статуса */
+.statusSelect {
+    background-color: var(--color-buttonColor);
+    color: #000000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+    width: 100%;
+    outline: none;
+}
+
+.statusSelect:hover {
+    opacity: 0.8;
+}
+
+.statusSelect:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* стили для кнопки перехода */
+.linkButton {
+    background-color: var(--color-buttonColor);
+    color: #000000;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    outline: none;
+}
+
+.linkButton:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.linkButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* стили для пустого состояния */
+.noReports {
+    text-align: center;
+    padding: 50px;
+    color: #666;
+    font-size: 18px;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #000;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 1200px) {
+    .reportCard {
+        flex-wrap: wrap;
+    }
+    
+    .userSection {
+        min-width: 100%;
+    }
+    
+    .reportType, .reportReason, .reportStatus {
+        flex: 1;
+    }
+    
+    .linkButton {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 15px;
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    .title {
+        font-size: 24px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .filterBar {
+        justify-content: center;
+    }
+    
+    .filterBtn {
+        padding: 6px 15px;
+        font-size: 12px;
+    }
+    
+    .reportCard {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .reportType, .reportReason, .reportStatus {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .label {
+        margin-bottom: 0;
+    }
+    
+    .statusSelect {
+        width: auto;
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filterBar {
+        gap: 10px;
+    }
+    
+    .filterBtn {
+        padding: 5px 12px;
+        font-size: 11px;
+    }
+    
+    .userCard {
+        padding: 8px 12px;
+    }
+    
+    .userAvatar {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+    
+    .username {
+        font-size: 13px;
+    }
+    
+    .reportType, .reportReason, .reportStatus {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .statusSelect {
+        width: 100%;
+    }
+    
+    .linkButton {
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+}
