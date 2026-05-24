@@ -1,21 +1,23 @@
+@import "../../../../style/variables.css";
+
 .card {
-  background-color: #D8C3A5;
+  background-color: var(--color-blockColor);
   width: 340px;
   height: 500px;
   border-radius: 10px;
-  color: black;
+  color: var(--color-text);
 }
 
 /* Основная ссылка карточки */
 .testLink {
   text-decoration: none;
-  color: black;
+  color: var(--color-text);
   display: block;
   height: 100%;
 }
 
 .testLink:hover {
-  color: black;
+  color: var(--color-text);
 }
 
 .imageContainer {
@@ -23,7 +25,7 @@
   height: 180px;
   overflow: hidden;
   border-radius: 10px 10px 0 0;
-  background-color: #4C4C4C;
+  background-color: var(--color-avatar);
 }
 
 .image {
@@ -35,7 +37,7 @@
 .imagePlaceholder {
   width: 100%;
   height: 100%;
-  background-color: #4C4C4C;
+  background-color: var(--color-avatar);
 }
 
 .authorBlock {
@@ -45,7 +47,7 @@
 }
 
 .authorChip {
-  background-color: #BE8F4C;
+  background-color: var(--color-buttonColor);
   height: 40px;
   width: 160px;
   border-radius: 10px;
@@ -55,7 +57,7 @@
 }
 
 .authorAvatar {
-  background-color: #4C4C4C;
+  background-color: var(--color-avatar);
   height: 32px;
   width: 32px;
   border-radius: 50%;
@@ -72,12 +74,12 @@
 .avatarPlaceholder {
   width: 100%;
   height: 100%;
-  background-color: #4C4C4C;
+  background-color: var(--color-avatar);
 }
 
 .authorName {
   margin-left: 8px;
-  color: black;
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 600;
 }
@@ -92,16 +94,16 @@
 .title {
   margin: 0;
   font-size: 1.5rem;
-  color: black;
+  color: var(--color-text);
 }
 
 .description {
   margin: 5px 0 0 0;
-  color: black;
+  color: var(--color-text);
 }
 
 .surveyBadge {
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 14px;
   margin: 5px 0 0 0;
 }
@@ -113,7 +115,7 @@
 
 .divider {
   height: 1px;
-  background-color: #000000;
+  background-color: var(--color-text);
   border: none;
   margin: 0;
 }
@@ -126,5 +128,5 @@
 
 .statItem {
   margin: 0;
-  color: black;
+  color: var(--color-text);
 }

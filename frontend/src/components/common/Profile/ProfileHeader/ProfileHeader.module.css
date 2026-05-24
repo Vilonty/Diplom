@@ -1,0 +1,567 @@
+@import "../../../../style/variables.css";
+
+.profileInfoBlockMain {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.profileImage {
+    display: flex;
+    padding: 2%;
+    width: 20%;
+    height: 100%;
+}
+
+.profileImage img {
+    width: 280px;
+    height: 290px;
+    background-color: gray;
+    border-radius: 10px;
+}
+
+.profileInfoBlockMainMain {
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 2%;
+}
+
+.profileName span,
+.profileBio span {
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+}
+
+.profileName {
+    margin-bottom: 10px;
+}
+
+.profileBio {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+}
+
+.profileStats {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    font-size: 20px;
+}
+
+.profileStats p {
+    margin: 0;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+}
+
+.profileInfoBlockMainEnd {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 2%;
+}
+
+/* Общие стили для всех кнопок - убираем обводку и делаем текст черным */
+.logoutButton,
+.editButton,
+.friendButton,
+.muteButton,
+.banButton,
+.reportButton {
+    background-color: var(--color-buttonColor);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: background-color 0.2s;
+    width: 180px;
+}
+
+.logoutButton:focus,
+.logoutButton:active,
+.editButton:focus,
+.editButton:active,
+.friendButton:focus,
+.friendButton:active,
+.muteButton:focus,
+.muteButton:active,
+.banButton:focus,
+.banButton:active,
+.reportButton:focus,
+.reportButton:active,
+button:focus,
+button:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.logoutButton:hover,
+.editButton:hover,
+.friendButton:hover,
+.muteButton:hover,
+.banButton:hover {
+    background-color: #8B6B3A;
+}
+
+.reportButton {
+    width: 32px;
+    height: 32px;
+    background-color: var(--color-buttonColor, #BE8F4C);
+    color: black;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.reportButton:hover {
+    background-color: #a47a3f;
+    transform: scale(1.05);
+}
+
+.loading,
+.error {
+    text-align: center;
+    padding: 40px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #D8C3A5;
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modalTitle {
+    font-size: 28px;
+    color: black;
+    margin-bottom: 25px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+
+.formGroup input,
+.formGroup textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #BE8F4C;
+    border-radius: 8px;
+    background-color: #EAE7DC;
+    color: black;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #8B6B3A;
+    box-shadow: 0 0 5px rgba(139, 107, 58, 0.3);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.avatarPreview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.avatarPreview img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    background-color: #4C4C4C;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.avatarPreview button {
+    background-color: #BE8F4C;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+}
+
+.avatarPreview button:focus,
+.avatarPreview button:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.avatarPreview button:hover {
+    background-color: #8B6B3A;
+}
+
+.fileInput {
+    display: none;
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.cancelButton {
+    background-color: #999;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+}
+
+.cancelButton:focus,
+.cancelButton:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.cancelButton:hover {
+    background-color: #777;
+}
+
+.saveButton {
+    background-color: #BE8F4C;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+}
+
+.saveButton:focus,
+.saveButton:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.saveButton:hover {
+    background-color: #8B6B3A;
+}
+
+/* планшет */
+@media (max-width: 1024px) {
+    .profileInfoBlockMainMain {
+        font-size: 24px;
+    }
+
+    .profileStats {
+        gap: 20px;
+    }
+
+    .profileStats p {
+        font-size: 18px;
+    }
+
+    .logoutButton,
+    .editButton,
+    .friendButton,
+    .muteButton,
+    .banButton {
+        width: 160px;
+        padding: 8px 16px;
+    }
+
+    .profileImage img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+    }
+
+    .profileImage {
+        width: 25%;
+    }
+}
+
+/* мобильные */
+@media (max-width: 768px) {
+    .profileInfoBlockMain {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profileImage {
+        width: 100%;
+        justify-content: center;
+        padding: 15px;
+    }
+
+    .profileImage img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .profileInfoBlockMainMain {
+        width: 100%;
+        text-align: center;
+        padding: 10px 15px;
+        font-size: 22px;
+        align-items: center;
+    }
+
+    .profileName {
+        font-size: 28px;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .profileBio {
+        text-align: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        font-size: 18px;
+    }
+
+    .profileStats {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .profileStats p {
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .profileInfoBlockMainEnd {
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .logoutButton,
+    .editButton,
+    .friendButton,
+    .muteButton,
+    .banButton {
+        width: 200px;
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+}
+
+/* маленькие телефоны */
+@media (max-width: 480px) {
+    .profileImage img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profileName {
+        font-size: 24px;
+    }
+
+    .profileBio {
+        font-size: 16px;
+    }
+
+    .profileStats {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .profileStats p {
+        font-size: 14px;
+    }
+
+    .logoutButton,
+    .editButton,
+    .friendButton,
+    .muteButton,
+    .banButton {
+        width: 180px;
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* очень маленькие телефоны */
+@media (max-width: 360px) {
+    .profileImage img {
+        width: 110px;
+        height: 110px;
+    }
+
+    .profileName {
+        font-size: 24px;
+    }
+
+    .profileBio {
+        font-size: 15px;
+    }
+
+    .profileStats p {
+        font-size: 14px;
+    }
+}
+
+/* альбомная ориентация */
+@media (max-width: 768px) and (orientation: landscape) {
+    .profileInfoBlockMain {
+        flex-direction: row;
+    }
+
+    .profileImage {
+        width: 30%;
+    }
+
+    .profileImage img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profileInfoBlockMainMain {
+        width: 70%;
+        text-align: left;
+    }
+
+    .profileBio {
+        text-align: left;
+        justify-content: flex-start;
+    }
+
+    .profileStats {
+        text-align: left;
+        justify-content: flex-start;
+    }
+
+    .profileInfoBlockMainEnd {
+        width: 100%;
+    }
+}
+
+/* адаптив модального окна */
+@media (max-width: 480px) {
+    .modalContent {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .modalTitle {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .formGroup label {
+        font-size: 14px;
+    }
+
+    .formGroup input,
+    .formGroup textarea {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .avatarPreview img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .cancelButton,
+    .saveButton {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+.unmuteButton,
+.unbanButton {
+    background-color: var(--color-buttonColor);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: background-color 0.2s;
+    width: 180px;
+}
+
+.unmuteButton:hover,
+.unbanButton:hover {
+    background-color: #8B6B3A;
+}

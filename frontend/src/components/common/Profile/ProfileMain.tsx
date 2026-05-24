@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import ProfileHeader from './ProfileHeader';
-import ProfileTabs from './ProfileTabs';
-import ProfileStatsBlock from './ProfileStatsBlock';
+import ProfileHeader from './ProfileHeader/ProfileHeader';
+import ProfileTabs from './ProfileHeader/ProfileTabs';
+import ProfileStatsBlock from './StatsBlock/ProfileStatsBlock';
 import styles from './profile.module.css';
 
 interface ProfileMainProps {

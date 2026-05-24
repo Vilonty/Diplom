@@ -1,9 +1,11 @@
+@import "../../../../style/variables.css";
+
 .questionBuilder {
     margin-top: 20px;
 }
 
 .questionBlock {
-    background: #D8C3A5;
+    background: var(--color-blockColor);
     border-radius: 15px;
     padding: 20px;
     margin-top: 20px;
@@ -19,7 +21,7 @@
 .questionHead h3 {
     font-size: 20px;
     font-weight: bold;
-    color: black;
+    color: var(--color-text);
     margin: 0;
     text-transform: lowercase;
 }
@@ -31,7 +33,7 @@
     border: none;
     font-size: 24px;
     font-weight: bold;
-    color: black;
+    color: var(--color-text);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -61,13 +63,13 @@
 .questionLeft span {
     font-weight: bold;
     font-size: 14px;
-    color: black;
+    color: var(--color-text);
 }
 
 .smallUpload {
     width: 120px;
     height: 120px;
-    background: #BE8F4C;
+    background: var(--color-buttonColor);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -89,15 +91,15 @@
 
 .smallPlus {
     font-size: 40px;
-    color: black;
+    color: var(--color-text);
     font-weight: bold;
 }
 
 .poolBtn {
     width: 100%;
     padding: 10px;
-    background: #BE8F4C !important;
-    color: black !important;
+    background: var(--color-buttonColor) !important;
+    color: var(--color-text) !important;
     font-weight: bold !important;
     font-size: 14px !important;
     border: none;
@@ -121,7 +123,7 @@
 .questionRight span {
     font-weight: bold;
     font-size: 14px;
-    color: black;
+    color: var(--color-text);
 }
 
 .questionRight input {
@@ -130,7 +132,7 @@
     border: none;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    color: black;
+    color: var(--color-text);
 }
 
 .questionRight input:disabled {
@@ -161,7 +163,7 @@
 .checkboxLabel span {
     font-weight: normal;
     font-size: 14px;
-    color: black;
+    color: var(--color-text);
 }
 
 .imagePreview {
@@ -174,7 +176,7 @@
     width: 100%;
     padding: 14px;
     background: transparent !important;
-    color: black !important;
+    color: var(--color-text) !important;
     border: none;
     font-size: 40px;
     font-weight: bold;
@@ -184,7 +186,7 @@
 }
 
 .addQuestionBtn:hover {
-    color: #BE8F4C !important;
+    color: var(--color-buttonColor) !important;
 }
 
 /* Модальные окна */
@@ -194,7 +196,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--color-overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -215,7 +217,7 @@
 }
 
 .poolModal {
-    background-color: #D8C3A5;
+    background-color: var(--color-blockColor);
     border-radius: 15px;
     width: 90%;
     max-width: 800px;
@@ -231,13 +233,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 25px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .modalHeader h3 {
     margin: 0;
     font-size: 22px;
-    color: black;
+    color: var(--color-text);
 }
 
 .closeModalBtn {
@@ -245,7 +247,7 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: black;
+    color: var(--color-text);
     padding: 5px;
     transition: opacity 0.3s ease;
 }
@@ -259,7 +261,7 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: black;
+    color: var(--color-text);
     padding: 5px;
     margin-right: 10px;
     transition: opacity 0.3s ease;
@@ -275,6 +277,7 @@
     flex-direction: column;
     gap: 15px;
     overflow-y: auto;
+    padding-bottom: 10px;
 }
 
 .poolCard {
@@ -289,12 +292,12 @@
 .poolCard:hover {
     background-color: rgba(255, 215, 157, 0.8);
     transform: translateX(5px);
-    border-color: #BE8F4C;
+    border-color: var(--color-buttonColor);
 }
 
 .poolCard.selected {
     background-color: rgba(190, 143, 76, 0.3);
-    border-color: #BE8F4C;
+    border-color: var(--color-buttonColor);
 }
 
 .poolCardHeader {
@@ -307,27 +310,27 @@
 .poolCardHeader h4 {
     margin: 0;
     font-size: 18px;
-    color: black;
+    color: var(--color-text);
 }
 
 .questionsCount {
     font-size: 12px;
-    color: #666;
+    color: var(--color-text-muted);
 }
 
 .poolDescription {
     margin: 0;
     font-size: 14px;
-    color: black;
+    color: var(--color-text);
 }
 
 .createPoolBtn {
-    margin: 10px 20px 0 20px;
+    margin: 10px 20px 20px 20px;
     padding: 12px;
-    background-color: #BE8F4C;
+    background-color: var(--color-buttonColor);
     border: none;
     border-radius: 8px;
-    color: black;
+    color: var(--color-text);
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -335,7 +338,7 @@
 }
 
 .createPoolBtn:hover {
-    background-color: #a47a3f;
+    background-color: var(--color-hover);
     transform: translateY(-2px);
 }
 
@@ -369,30 +372,30 @@
 
 .questionNumber {
     font-size: 14px;
-    color: #666;
+    color: var(--color-text-muted);
     font-weight: bold;
 }
 
 .selectQuestionBtn {
-    background-color: #BE8F4C;
+    background-color: var(--color-buttonColor);
     border: none;
     border-radius: 6px;
     padding: 5px 12px;
     font-size: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: black;
+    color: var(--color-text);
     font-weight: bold;
 }
 
 .selectQuestionBtn:hover {
-    background-color: #a47a3f;
+    background-color: var(--color-hover);
 }
 
 .questionCardText {
     margin: 0 0 10px 0;
     font-size: 16px;
-    color: black;
+    color: var(--color-text);
     font-weight: bold;
 }
 
@@ -408,7 +411,7 @@
     padding: 4px 8px;
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 5px;
-    color: black;
+    color: var(--color-text);
 }
 
 .previewAnswer.correct {
@@ -421,11 +424,11 @@
     padding: 0 20px;
     margin: 0 0 5px 0;
     font-size: 14px;
-    color: black;
+    color: var(--color-text);
 }
 
 .createPoolModal {
-    background-color: #D8C3A5;
+    background-color: var(--color-blockColor);
     border-radius: 15px;
     width: 90%;
     max-width: 500px;
@@ -436,7 +439,7 @@
 .createPoolModal h3 {
     margin: 0 0 20px 0;
     font-size: 24px;
-    color: black;
+    color: var(--color-text);
     text-align: center;
 }
 
@@ -445,16 +448,16 @@
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #BE8F4C;
+    border: 1px solid var(--color-buttonColor);
     border-radius: 8px;
-    background-color: #EAE7DC;
+    background-color: var(--color-background);
     box-sizing: border-box;
-    color: black;
+    color: var(--color-text);
 }
 
 .createPoolModal input::placeholder,
 .createPoolModal textarea::placeholder {
-    color: #666;
+    color: var(--color-text-muted);
 }
 
 .modalButtons {
@@ -462,6 +465,7 @@
     justify-content: flex-end;
     gap: 15px;
     margin-top: 20px;
+    padding: 0 20px 25px 20px;
 }
 
 .cancelBtn {
@@ -476,12 +480,12 @@
 
 .confirmBtn {
     padding: 8px 20px;
-    background-color: #BE8F4C;
+    background-color: var(--color-buttonColor);
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
-    color: black;
+    color: var(--color-text);
     transition: opacity 0.3s ease;
 }
 
@@ -519,37 +523,6 @@
     .createPoolModal {
         width: 95%;
     }
-}
-
-
-.createPoolBtn {
-    margin: 10px 20px 20px 20px;  /* Увеличил нижний отступ */
-    padding: 12px;
-    background-color: #BE8F4C;
-    border: none;
-    border-radius: 8px;
-    color: black;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.modalButtons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 20px;
-    padding: 0 20px 25px 20px;  /* Добавил нижний отступ */
-}
-
-.poolsList {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    overflow-y: auto;
-    padding-bottom: 10px;  /* Добавил */
 }
 
 /* Для модального окна добавления в пул */

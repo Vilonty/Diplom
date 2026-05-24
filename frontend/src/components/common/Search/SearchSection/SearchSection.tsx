@@ -29,6 +29,17 @@ const SearchSection = ({
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const userSearchRef = useRef<HTMLDivElement>(null);
 
+  const BASE_URL = 'http://localhost:8000';
+
+  // Функция для получения полного URL аватара
+  const getAvatarUrl = (avatar: string | null) => {
+    if (!avatar) return null;
+    if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+      return avatar;
+    }
+    return `${BASE_URL}${avatar}`;
+  };
+
   // Чтение параметров из URL при загрузке
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -117,7 +128,6 @@ const SearchSection = ({
         <div className={styles.userSearchContainer} ref={userSearchRef}>
           <button 
             className={styles.searchButton}
-            style={{ backgroundColor: '#BE8F4C' }}
             onClick={() => setShowUserSearch(!showUserSearch)}
           >
             👤
@@ -136,25 +146,39 @@ const SearchSection = ({
                 {searchUsers.length === 0 && userSearchQuery.length >= 2 && (
                   <div className={styles.noUsers}>Пользователи не найдены</div>
                 )}
-                {searchUsers.map(user => (
-                  <div 
-                    key={user.id} 
-                    className={styles.userResult}
-                    onClick={() => handleUserClick(user.id)}
-                  >
-                    <div className={styles.userAvatar}>
-                      {user.avatar ? (
-                        <img src={user.avatar} alt={user.login} />
-                      ) : (
-                        <div className={styles.avatarPlaceholder} />
-                      )}
+                {searchUsers.map(user => {
+                  const avatarUrl = getAvatarUrl(user.avatar);
+                  const userName = user.full_name || user.login;
+                  const firstLetter = userName.charAt(0).toUpperCase();
+                  
+                  return (
+                    <div 
+                      key={user.id} 
+                      className={styles.userResult}
+                      onClick={() => handleUserClick(user.id)}
+                    >
+                      <div className={styles.userAvatar}>
+                        {avatarUrl ? (
+                          <img 
+                            src={avatarUrl} 
+                            alt={user.login}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.parentElement?.querySelector('.avatarPlaceholder')?.classList.add(styles.show);
+                            }}
+                          />
+                        ) : null}
+                        <div className={`${styles.avatarPlaceholder} ${!avatarUrl ? styles.show : ''}`}>
+                          {firstLetter}
+                        </div>
+                      </div>
+                      <div className={styles.userInfo}>
+                        <div className={styles.userName}>{userName}</div>
+                        <div className={styles.userLogin}>@{user.login}</div>
+                      </div>
                     </div>
-                    <div className={styles.userInfo}>
-                      <div className={styles.userName}>{user.full_name || user.login}</div>
-                      <div className={styles.userLogin}>@{user.login}</div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

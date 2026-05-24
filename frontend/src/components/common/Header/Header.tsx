@@ -11,7 +11,7 @@ const Header = () => {
   const location = useLocation();
   const searchRef = useRef(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
   const showSearch = true;
@@ -27,7 +27,6 @@ const Header = () => {
           setIsAuthenticated(true);
           setUserId(user.id?.toString() || null);
           
-          // Проверяем статус администратора
           const status = await getUserStatus();
           setIsAdmin(status === 'admin');
         } catch (e) {
@@ -93,9 +92,8 @@ const Header = () => {
         <div className={styles.container}>
           {showSearch && (
             <button className={styles.searchButton} onClick={toggleSearch} aria-label="Поиск">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" />
               </svg>
             </button>
           )}
@@ -108,13 +106,11 @@ const Header = () => {
             <Link to="/" className={styles.navLink}>ГЛАВНАЯ</Link>
             <Link to="/testlist" className={styles.navLink}>ТЕСТЫ</Link>
             <Link to="/create" className={styles.navLink}>СОЗДАТЬ</Link>
-            {/* Ссылка на админ панель только для администратора */}
             {isAdmin && (
               <Link to="/admin" className={styles.navLink}>АДМИН</Link>
             )}
           </nav>
           
-          {/* Одна и та же кнопка: если авторизован - ведёт на профиль, если нет - на регистрацию */}
           <Link to={isAuthenticated ? `/profile/${userId}` : "/register"} className={styles.loginButton}>
             <img src={loginIcon} alt="картинка кнопки пользователя" />
             {!isAuthenticated && <span>войти</span>}
@@ -122,16 +118,15 @@ const Header = () => {
           
           <div className={styles.mobileButtons}>
             <Link to={isAuthenticated ? `/profile/${userId}` : "/register"} className={styles.profileButton} aria-label="Профиль">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
             </Link>
             
             <button className={styles.burgerButton} onClick={toggleMenu} aria-label="Меню">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 6L20 6M4 12L20 12M4 18L20 18" />
               </svg>
             </button>
           </div>

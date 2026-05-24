@@ -1,0 +1,78 @@
+@import "../../../../style/variables.css";
+
+.profileInfoBlockBottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.profileInfoBlockBottom button {
+    background-color: var(--color-blockColor);
+    color: var(--color-text);
+    font-size: 20px;
+    margin: 1.5%;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    font-family: Arial, Helvetica, sans-serif;
+    outline: none;
+    box-shadow: none;
+}
+
+.profileInfoBlockBottom button:focus,
+.profileInfoBlockBottom button:active,
+.profileInfoBlockBottom button:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+.profileInfoBlockBottom button.active {
+    color: #7E7E7E;
+    font-weight: bold;
+}
+
+/* планшет */
+@media (max-width: 1024px) {
+    .profileInfoBlockBottom button {
+        font-size: 20px;
+        margin: 1%;
+        padding: 10px 18px;
+    }
+}
+
+/* мобильные */
+@media (max-width: 768px) {
+    .profileInfoBlockBottom {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .profileInfoBlockBottom button {
+        font-size: 18px;
+        margin: 0;
+        padding: 10px 20px;
+        flex: 1;
+        min-width: 110px;
+    }
+}
+
+/* маленькие телефоны */
+@media (max-width: 480px) {
+    .profileInfoBlockBottom button {
+        font-size: 16px;
+        padding: 8px 14px;
+        min-width: 90px;
+    }
+}
+
+/* очень маленькие телефоны */
+@media (max-width: 360px) {
+    .profileInfoBlockBottom button {
+        font-size: 15px;
+        padding: 6px 12px;
+        min-width: 80px;
+    }
+}

@@ -100,3 +100,62 @@ h2 {
         font-size: 28px;
     }
 }
+
+.bannedMessage {
+    background-color: #D8C3A5;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.bannedText {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 15px;
+}
+
+.bannedReason {
+    font-size: 16px;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.bannedUntil {
+    font-size: 14px;
+    color: #000000;
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.bannedPermanent {
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.backButton {
+    background-color: #BE8F4C;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000000;
+    margin-top: 15px;
+}
+
+.backButton:hover {
+    background-color: #a47a3f;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #000000;
+}

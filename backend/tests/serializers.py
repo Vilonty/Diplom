@@ -6,18 +6,24 @@ User = get_user_model()
 
 
 class UserSimpleSerializer(serializers.ModelSerializer):
+    """Упрощённый сериализатор пользователя (для вложенных полей)"""
+    
     class Meta:
         model = User
         fields = ('id', 'login', 'full_name', 'avatar')
 
 
 class AnswerSerializer(serializers.ModelSerializer):
+    """Сериализатор варианта ответа"""
+    
     class Meta:
         model = Answer
         fields = ('id', 'text', 'is_correct', 'order_index')
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """Сериализатор вопроса (для чтения)"""
+    
     answers = AnswerSerializer(many=True, read_only=True)
     author_info = UserSimpleSerializer(source='author', read_only=True)
     image_url = serializers.SerializerMethodField()
@@ -39,6 +45,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class QuestionCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания вопроса (с вариантами ответов)"""
+    
     answers = AnswerSerializer(many=True, required=False, write_only=True)
     image = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     
@@ -68,6 +76,8 @@ class QuestionCreateSerializer(serializers.ModelSerializer):
 
 
 class PoolSerializer(serializers.ModelSerializer):
+    """Сериализатор пула вопросов (для списка)"""
+    
     user_info = UserSimpleSerializer(source='user', read_only=True)
     questions_count = serializers.IntegerField(source='pool_questions.count', read_only=True)
     questions = serializers.SerializerMethodField(read_only=True)
@@ -101,6 +111,8 @@ class PoolSerializer(serializers.ModelSerializer):
 
 
 class PoolDetailSerializer(PoolSerializer):
+    """Сериализатор пула вопросов (детальный, с полными данными вопросов)"""
+    
     questions = serializers.SerializerMethodField()
     
     class Meta(PoolSerializer.Meta):
@@ -113,6 +125,8 @@ class PoolDetailSerializer(PoolSerializer):
 
 
 class PoolQuestionSerializer(serializers.ModelSerializer):
+    """Сериализатор связи пула с вопросом"""
+    
     question = QuestionSerializer(read_only=True)
     question_id = serializers.IntegerField(write_only=True)
     
@@ -124,6 +138,8 @@ class PoolQuestionSerializer(serializers.ModelSerializer):
 
 
 class TestSerializer(serializers.ModelSerializer):
+    """Сериализатор теста (для списка)"""
+    
     author_info = UserSimpleSerializer(source='author', read_only=True)
     questions_count = serializers.IntegerField(source='test_questions.count', read_only=True)
     attempts_count = serializers.IntegerField(read_only=True)
@@ -134,7 +150,8 @@ class TestSerializer(serializers.ModelSerializer):
         model = Test
         fields = ('id', 'title', 'description', 'author', 'author_info', 'is_open', 'is_survey',
                   'time_limit', 'passing_score', 'attempts_limit', 'image', 'image_url', 'topics',
-                  'questions_count', 'attempts_count', 'average_rating', 'access_token', 'created_at', 'updated_at')
+                  'questions_count', 'attempts_count', 'average_rating', 
+                  'access_token', 'created_at', 'updated_at')
         read_only_fields = ('id', 'created_at', 'updated_at')
         extra_kwargs = {'author': {'write_only': True}}
     
@@ -147,6 +164,8 @@ class TestSerializer(serializers.ModelSerializer):
 
 
 class TestDetailSerializer(TestSerializer):
+    """Сериализатор теста (детальный, с вопросами)"""
+    
     questions = serializers.SerializerMethodField()
     
     class Meta(TestSerializer.Meta):
@@ -159,6 +178,8 @@ class TestDetailSerializer(TestSerializer):
 
 
 class TestCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания теста"""
+    
     question_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
     time_limit = serializers.IntegerField(required=False, default=0)
     passing_score = serializers.IntegerField(required=False, default=70)
@@ -207,6 +228,8 @@ class TestCreateSerializer(serializers.ModelSerializer):
 
 
 class TestAttemptSerializer(serializers.ModelSerializer):
+    """Сериализатор попытки прохождения теста"""
+    
     test = TestSerializer(read_only=True)
     user_login = serializers.CharField(source='user.login', read_only=True)
     author_avatar = serializers.SerializerMethodField()
@@ -223,7 +246,7 @@ class TestAttemptSerializer(serializers.ModelSerializer):
         model = TestAttempt
         fields = ('id', 'name', 'type', 'author', 'author_id', 'questions', 
                   'result', 'date', 'score', 'is_passed', 'is_open', 
-                  'started_at', 'finished_at')  # Добавь started_at и finished_at
+                  'started_at', 'finished_at')
     
     def get_type(self, obj):
         return 'опрос' if obj.test.is_survey else 'тест'
@@ -233,8 +256,14 @@ class TestAttemptSerializer(serializers.ModelSerializer):
     
     def get_date(self, obj):
         return obj.finished_at.strftime('%d.%m.%Y') if obj.finished_at else ''
+    
+    def get_author_avatar(self, obj):
+        return obj.test.author.avatar if obj.test.author.avatar else None
+
 
 class TestCommentSerializer(serializers.ModelSerializer):
+    """Сериализатор комментария к тесту"""
+    
     user_info = UserSimpleSerializer(source='user', read_only=True)
     user_id = serializers.IntegerField(source='user.id', read_only=True)
     
@@ -246,6 +275,8 @@ class TestCommentSerializer(serializers.ModelSerializer):
 
 
 class TestRatingSerializer(serializers.ModelSerializer):
+    """Сериализатор оценки теста"""
+    
     class Meta:
         model = TestRating
         fields = ('id', 'test', 'user', 'rating', 'created_at')
@@ -254,15 +285,24 @@ class TestRatingSerializer(serializers.ModelSerializer):
 
 
 class ReportSerializer(serializers.ModelSerializer):
-    user_info = UserSimpleSerializer(source='user', read_only=True)
+    user_info = serializers.SerializerMethodField()
     
     class Meta:
         model = Report
-        fields = ('id', 'target_type', 'target_id', 'user', 'user_info', 'reason', 'status', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'status', 'created_at', 'updated_at')
-        extra_kwargs = {'user': {'read_only': True}}
+        fields = '__all__'
+    
+    def get_user_info(self, obj):
+        return {
+            'id': obj.user.id,
+            'login': obj.user.login,
+            'full_name': obj.user.full_name,
+            'avatar': obj.user.avatar,
+        }
+
 
 class UserSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор пользователя (для краткого представления)"""
+    
     class Meta:
         model = User
         fields = ('id', 'login', 'full_name', 'avatar', 'status')

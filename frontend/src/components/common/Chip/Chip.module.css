@@ -1,10 +1,12 @@
+@import "../../../style/variables.css";
+
 .chip {
     height: 50px;
     width: 155px;
     padding: 0 20px;
-    background-color: #D8C3A5;
+    background-color: var(--color-blockColor);
     border-radius: 10px;
-    color: black;
+    color: var(--color-text);
     font-size: 30px;
     border: none;
     cursor: pointer;
@@ -28,9 +30,8 @@
 .filter {
     height: 50px;
     width: 60px;
-    background-color: #D8C3A5; 
+    background-color: var(--color-blockColor);
 }
-
 
 .active {
     background-color: #7E7E7E;

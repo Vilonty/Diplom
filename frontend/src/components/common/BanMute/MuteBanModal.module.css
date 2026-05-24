@@ -1,0 +1,132 @@
+@import "../../../style/variables.css";
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: var(--color-blockColor);
+    border-radius: 10px;
+    padding: 30px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modalTitle {
+    font-size: 24px;
+    color: var(--color-text);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    color: var(--color-text);
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-buttonColor);
+    border-radius: 8px;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: var(--color-hover);
+}
+
+.durationButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.durationBtn {
+    background-color: var(--color-buttonColor);
+    color: var(--color-text);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.durationBtn:hover {
+    background-color: var(--color-hover);
+}
+
+.durationBtn.active {
+    background-color: #8B6B3A;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.customDuration {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.customInput {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--color-buttonColor);
+    border-radius: 6px;
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+.customSelect {
+    padding: 8px;
+    border: 1px solid var(--color-buttonColor);
+    border-radius: 6px;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.modalButtons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cancelButton,
+.submitButton {
+    background-color: var(--color-buttonColor);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cancelButton:hover,
+.submitButton:hover {
+    background-color: var(--color-hover);
+}

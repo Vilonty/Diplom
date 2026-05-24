@@ -2,5 +2,17 @@
     --color-background: #EAE7DC;
     --color-blockColor: #D8C3A5;
     --color-buttonColor: #BE8F4C;
-    --color-activeButton: #FC4445;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffaa00;
+    --color-text: #000000;
+    --color-text-muted: #666;
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-border-dark: rgba(0, 0, 0, 0.2);
+    --color-avatar: #4C4C4C;
+    --color-hover: #a47a3f;
+    --color-overlay: rgba(0, 0, 0, 0.7);
+    --color-scrollbar-track: rgba(0, 0, 0, 0.1);
+    --color-scrollbar-thumb: rgba(0, 0, 0, 0.3);
+    --color-scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
 }

@@ -31,7 +31,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .radioLabel {
@@ -51,6 +51,37 @@
 
 .radioLabel input:focus {
   outline: none;
+}
+
+.modalComment {
+  margin-bottom: 20px;
+}
+
+.commentLabel {
+  display: block;
+  color: black;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.commentTextarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #BE8F4C;
+  border-radius: 8px;
+  background-color: #EAE7DC;
+  color: black;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.commentTextarea:focus {
+  outline: none;
+  border-color: #8B6B3A;
+  box-shadow: 0 0 5px rgba(139, 107, 58, 0.3);
 }
 
 .modalButtons {

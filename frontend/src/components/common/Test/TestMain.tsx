@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { getTestDetails, startTest, getComments, addComment, submitReport, getTestRating } from '../../../api/tests';
 import ReportModal from '../../../components/common/ReportModal/ReportModal';
 import AuthorChip from '../../../components/common/Chip/userChip/AuthorChip';
+import api from '../../../api/axios';
 import styles from './TestPage.module.css';
 
 const TestPage = () => {
@@ -20,35 +21,43 @@ const TestPage = () => {
     const [currentReportType, setCurrentReportType] = useState<'test' | 'comment' | null>(null);
     const [currentCommentId, setCurrentCommentId] = useState<number | null>(null);
     const [newComment, setNewComment] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const BASE_URL = 'http://localhost:8000';
 
-    const testReportReasons = [
-        "Несоответствие теме",
-        "Неприемлемый контент",
-        "Спам",
-        "Другое"
-    ];
-
-    const commentReportReasons = [
-        "Оскорбительное поведение",
-        "Спам",
-        "Другое"
-    ];
+    const testReportReasons = ["Несоответствие теме", "Неприемлемый контент", "Спам", "Другое"];
+    const commentReportReasons = ["Оскорбительное поведение", "Спам", "Другое"];
 
     useEffect(() => {
         if (testId) {
             loadTestData();
             loadComments();
             loadTestRating();
+            checkAdminStatus();
         }
     }, [testId]);
 
+    // Проверка статуса админа - ТОЛЬКО ЕСЛИ ЕСТЬ ТОКЕН
+    const checkAdminStatus = async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            setIsAdmin(false);
+            return;
+        }
+        
+        try {
+            const profile = await api.get('/auth/profile/');
+            setIsAdmin(profile.data.status === 'admin');
+        } catch (error) {
+            console.error('Ошибка проверки админа:', error);
+            setIsAdmin(false);
+        }
+    };
+
+    // Загрузка данных теста
     const loadTestData = async () => {
         try {
             const data = await getTestDetails(Number(testId));
-            console.log('Загружен тест:', data);
-            console.log('URL картинки теста:', data.image);
             setTest(data);
         } catch (error) {
             console.error('Ошибка загрузки теста:', error);
@@ -57,6 +66,7 @@ const TestPage = () => {
         }
     };
 
+    // Загрузка комментариев
     const loadComments = async () => {
         try {
             const data = await getComments(Number(testId));
@@ -66,6 +76,7 @@ const TestPage = () => {
         }
     };
 
+    // Загрузка рейтинга
     const loadTestRating = async () => {
         try {
             const data = await getTestRating(Number(testId));
@@ -75,18 +86,17 @@ const TestPage = () => {
         }
     };
 
+    // Начало прохождения теста
     const handleStart = async () => {
-        console.log('Нажата кнопка старт, testId:', testId);
         try {
             const response = await startTest(Number(testId));
-            console.log('Ответ от сервера:', response);
             navigate(`/test/${testId}/question/1`, { state: { attemptId: response.attempt_id } });
         } catch (error: any) {
-            console.error('Ошибка:', error);
             alert(`Не удалось начать тест: ${error.response?.data?.error || 'Неизвестная ошибка'}`);
         }
     };
 
+    // Добавление комментария
     const handleAddComment = async () => {
         if (!newComment.trim()) return;
         try {
@@ -94,11 +104,38 @@ const TestPage = () => {
             setNewComment('');
             await loadComments();
         } catch (error) {
-            console.error('Ошибка добавления комментария:', error);
             alert('Не удалось добавить комментарий');
         }
     };
 
+    // Удаление теста (только для админа)
+    const handleDeleteTest = async () => {
+        if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
+            try {
+                await api.delete(`/tests/${testId}/delete/`);
+                alert('Тест успешно удалён');
+                navigate('/testlist');
+            } catch (error: any) {
+                alert(`Ошибка при удалении теста: ${error.response?.data?.error || error.message}`);
+            }
+        }
+    };
+
+    // Удаление комментария (только для админа)
+    const handleDeleteComment = async (commentId: number) => {
+        if (window.confirm('Вы уверены, что хотите удалить этот комментарий?')) {
+            try {
+                await api.delete(`/comments/${commentId}/`);
+                alert('Комментарий успешно удалён');
+                await loadComments();
+            } catch (error: any) {
+                console.error('Ошибка при удалении комментария:', error);
+                alert(`Ошибка при удалении комментария: ${error.response?.data?.error || error.message}`);
+            }
+        }
+    };
+
+    // Открытие модалки жалобы
     const openReportModal = (type: 'test' | 'comment', commentId?: number) => {
         setCurrentReportType(type);
         if (commentId) setCurrentCommentId(commentId);
@@ -111,50 +148,44 @@ const TestPage = () => {
         setCurrentCommentId(null);
     };
 
-    const handleSubmitReport = async (reason: string) => {
+    // Отправка жалобы
+    const handleSubmitReport = async (reason: string, comment: string) => {
         const token = localStorage.getItem('access_token');
         if (!token) {
             const confirm = window.confirm('Вы не авторизованы. Хотите перейти на страницу входа?');
-            if (confirm) {
-                navigate('/login');
-            }
+            if (confirm) navigate('/login');
             return;
         }
         
         try {
-            await submitReport({
-                target_type: currentReportType === 'test' ? 'test' : 'comment',
-                target_id: currentReportType === 'test' ? Number(testId) : currentCommentId!,
-                reason: reason
-            });
+            if (currentReportType === 'comment') {
+                await submitReport({
+                    target_type: 'comment',
+                    target_id: currentCommentId!,
+                    test_id: Number(testId),
+                    reason: reason,
+                    comment: comment
+                });
+            } else {
+                await submitReport({
+                    target_type: 'test',
+                    target_id: Number(testId),
+                    reason: reason,
+                    comment: comment
+                });
+            }
             alert('Жалоба отправлена');
             closeReportModal();
         } catch (error: any) {
-            console.error('Ошибка отправки жалобы:', error);
-            
-            if (error.response?.status === 401) {
-                const confirm = window.confirm('Сессия истекла. Хотите перейти на страницу входа?');
-                if (confirm) {
-                    navigate('/login');
-                }
-            } else {
-                alert(`Ошибка при отправке жалобы: ${error.response?.data?.error || error.message}`);
-            }
+            alert(`Ошибка: ${error.response?.data?.error || error.message}`);
         }
     };
 
     const getModalProps = () => {
         if (currentReportType === 'test') {
-            return {
-                title: 'Пожаловаться на тест',
-                reasons: testReportReasons
-            };
-        } else {
-            return {
-                title: 'Пожаловаться на комментарий',
-                reasons: commentReportReasons
-            };
+            return { title: 'Пожаловаться на тест', reasons: testReportReasons };
         }
+        return { title: 'Пожаловаться на комментарий', reasons: commentReportReasons };
     };
 
     if (loading) {
@@ -182,9 +213,9 @@ const TestPage = () => {
     const typeDisplay = test.is_survey ? 'опрос' : 'тест';
     const averageRating = testRating.average_rating || 0;
     const ratingsCount = testRating.ratings_count || 0;
+    const attemptsCount = test.attempts_count || 0;
     
     const imageFullUrl = test.image ? `${BASE_URL}${test.image}` : null;
-
     const modalProps = getModalProps();
 
     return (
@@ -198,16 +229,29 @@ const TestPage = () => {
                                 alt={test.title} 
                                 className={styles.testImage}
                                 onError={(e) => {
-                                    console.error('Ошибка загрузки картинки теста:', imageFullUrl);
                                     e.currentTarget.style.display = 'none';
                                 }}
                             />
                         ) : (
                             <div className={styles.imagePlaceholder} />
                         )}
-                        <button className={styles.reportButton} onClick={() => openReportModal('test')}>
-                            !
-                        </button>
+                        <div className={styles.imageButtons}>
+                            {isAdmin ? (
+                                <button 
+                                    className={styles.deleteTestButton}
+                                    onClick={handleDeleteTest}
+                                >
+                                    Удалить тест
+                                </button>
+                            ) : (
+                                <button 
+                                    className={styles.reportButton}
+                                    onClick={() => openReportModal('test')}
+                                >
+                                    !
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <div className={styles.authorStatsRow}>
@@ -218,7 +262,7 @@ const TestPage = () => {
                         />
                         <div className={styles.statsInfo}>
                             <span>⭐ {averageRating.toFixed(1)}/5 ({ratingsCount})</span>
-                            <span>👤 0</span>
+                            <span>👤 {attemptsCount}</span>
                         </div>
                     </div>
 
@@ -268,12 +312,23 @@ const TestPage = () => {
                                                 <span>{comment.user_info?.full_name || comment.user_info?.login}</span>
                                             </div>
                                         </Link>
-                                        <button 
-                                            className={styles.reportCommentButton}
-                                            onClick={() => openReportModal('comment', comment.id)}
-                                        >
-                                            !
-                                        </button>
+                                        <div className={styles.commentActions}>
+                                            {isAdmin ? (
+                                                <button 
+                                                    className={styles.deleteCommentButton}
+                                                    onClick={() => handleDeleteComment(comment.id)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    className={styles.reportCommentButton}
+                                                    onClick={() => openReportModal('comment', comment.id)}
+                                                >
+                                                    !
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className={styles.commentBody}>
                                         <span>{comment.text}</span>

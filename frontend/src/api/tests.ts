@@ -152,12 +152,13 @@ export const addComment = async (testId: number, text: string) => {
 export const submitReport = async (data: {
     target_type: 'test' | 'comment';
     target_id: number;
+    test_id?: number;  // ДОБАВИТЬ ДЛЯ КОММЕНТАРИЕВ
     reason: string;
+    comment?: string;
 }) => {
     const response = await api.post('/reports/', data);
     return response.data;
 };
-
 export const getTestRating = async (testId: number) => {
     const response = await api.get(`/tests/${testId}/rate/`);
     return response.data;

@@ -189,3 +189,30 @@
   color: white;
   cursor: pointer;
 }
+
+/* Контейнер загрузки */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 40px;
+  gap: 20px;
+}
+
+/* Картинка загрузки */
+.loadingImage {
+  width: 200px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Текст загрузки */
+.loadingText {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000000;
+  text-align: center;
+  letter-spacing: 2px;
+}

@@ -3,7 +3,7 @@
 import React from 'react';
 import InputForm from '../Form/RegisterAuthForm/InputForm';
 import BaseAuthLayout from './BaseAuthLayout';
-import AuthButton from '../Button/AuthButton/AuthButton';
+import AuthButton from '../Button/AuthButton/Auth/AuthButton';
 import { useLoginForm } from '../../../hooks/useAuthForm';
 import styles from "./LoginMain.module.css";
 

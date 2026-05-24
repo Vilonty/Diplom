@@ -1,0 +1,265 @@
+@import "../../../../style/variables.css";
+
+.statisticsContent {
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* фиксированный заголовок */
+.stickyHeader {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-blockColor);
+    z-index: 10;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.stickyHeader h3 {
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* обёртка для таблицы */
+.tableWrapper {
+    overflow-x: auto;
+    width: 100%;
+    flex: 1;
+}
+
+/* скроллбар */
+.tableWrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: var(--color-scrollbar-track);
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
+}
+
+/* таблица */
+.statsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* шапка таблицы */
+.statsTable th {
+    background-color: var(--color-buttonColor);
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    border: none;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* ячейки */
+.statsTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* hover на строку - убираем */
+.statsTable tr:hover {
+    background-color: transparent;
+}
+
+/* результат теста */
+.statsTable .result {
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+/* ссылки */
+.testLink a,
+.authorLink a {
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: opacity 0.2s ease;
+}
+
+.testLink a {
+    font-weight: 700 !important;
+    color: var(--color-text) !important;
+}
+
+.authorLink a {
+    font-weight: 600 !important;
+    color: var(--color-text) !important;
+}
+
+.testLink a:hover,
+.authorLink a:hover {
+    opacity: 0.7;
+    text-decoration: none !important;
+}
+
+/* загрузка, ошибка */
+.loading,
+.error {
+    text-align: center;
+    padding: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.loading {
+    color: var(--color-text-muted);
+}
+
+.error {
+    color: var(--color-danger);
+}
+
+/* пустое состояние - НЕТ ПРОЙДЕННЫХ ТЕСТОВ */
+.empty {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* планшет */
+@media (max-width: 1024px) {
+    .statisticsContent {
+        padding: 15px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 22px;
+    }
+
+    .statsTable th,
+    .statsTable td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .empty {
+        padding: 50px 30px;
+        font-size: 17px;
+    }
+}
+
+/* мобильные */
+@media (max-width: 768px) {
+    .statisticsContent {
+        padding: 12px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 20px;
+    }
+
+    .statsTable {
+        min-width: 600px;
+        font-size: 13px;
+    }
+
+    .statsTable th,
+    .statsTable td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .empty {
+        padding: 45px 25px;
+        font-size: 16px;
+    }
+}
+
+/* маленькие телефоны */
+@media (max-width: 480px) {
+    .statisticsContent {
+        padding: 10px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 18px;
+    }
+
+    .statsTable {
+        min-width: 500px;
+        font-size: 12px;
+    }
+
+    .statsTable th,
+    .statsTable td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .loading,
+    .error {
+        padding: 30px;
+        font-size: 13px;
+    }
+    
+    .empty {
+        padding: 35px 20px;
+        font-size: 15px;
+    }
+}
+
+/* альбомная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .statisticsContent {
+        padding: 10px;
+    }
+
+    .statsTable {
+        min-width: 550px;
+    }
+
+    .statsTable td {
+        padding: 8px 10px;
+    }
+}
+
+/* очень маленькие телефоны */
+@media (max-width: 360px) {
+    .statsTable {
+        min-width: 450px;
+        font-size: 11px;
+    }
+
+    .statsTable th,
+    .statsTable td {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+    
+    .empty {
+        padding: 30px 15px;
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,342 @@
+@import "../../../../style/variables.css";
+
+.testsContent {
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* фиксированный заголовок */
+.stickyHeader {
+    position: sticky;
+    top: 0;
+    background-color: var(--color-blockColor);
+    z-index: 10;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.stickyHeader h3 {
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* обёртка для таблицы */
+.tableWrapper {
+    overflow-x: auto;
+    width: 100%;
+    flex: 1;
+}
+
+/* скроллбар */
+.tableWrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: var(--color-scrollbar-track);
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
+}
+
+/* таблица */
+.testsTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* шапка таблицы */
+.testsTable th {
+    background-color: var(--color-buttonColor);
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    border: none;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* ячейки */
+.testsTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-border);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-text);
+}
+
+/* hover на строку - убираем */
+.testsTable tr:hover {
+    background-color: transparent;
+}
+
+/* рейтинг */
+.rating {
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+/* публичный / приватный */
+.public {
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+.private {
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+/* информация о тесте */
+.testInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.testDescription {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+/* ссылки */
+.testLink a {
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    color: var(--color-text) !important;
+    transition: opacity 0.2s ease;
+}
+
+.testLink a:hover {
+    opacity: 0.7;
+    text-decoration: none !important;
+}
+
+/* загрузка, ошибка */
+.loading,
+.error {
+    text-align: center;
+    padding: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.loading {
+    color: var(--color-text-muted);
+}
+
+.error {
+    color: var(--color-danger);
+}
+
+/* пустое состояние - НЕТ СОЗДАННЫХ ТЕСТОВ */
+.empty {
+    text-align: center;
+    padding: 60px 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+/* планшет */
+@media (max-width: 1024px) {
+    .testsContent {
+        padding: 15px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 22px;
+    }
+
+    .testsTable th,
+    .testsTable td {
+        padding: 12px 15px;
+        font-size: 15px;
+    }
+
+    .testDescription {
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    .testInfo strong {
+        font-size: 16px;
+    }
+    
+    .empty {
+        padding: 50px 30px;
+        font-size: 17px;
+    }
+}
+
+/* мобильные */
+@media (max-width: 768px) {
+    .testsContent {
+        padding: 15px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 20px;
+    }
+
+    .testsTable {
+        min-width: 700px;
+        font-size: 14px;
+    }
+
+    .testsTable th,
+    .testsTable td {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    .testInfo strong {
+        font-size: 16px;
+    }
+
+    .testDescription {
+        font-size: 14px;
+        margin-top: 6px;
+        max-width: 250px;
+    }
+
+    .rating {
+        font-size: 14px;
+    }
+    
+    .empty {
+        padding: 45px 25px;
+        font-size: 16px;
+    }
+}
+
+/* маленькие телефоны */
+@media (max-width: 480px) {
+    .testsContent {
+        padding: 12px;
+    }
+
+    .stickyHeader h3 {
+        font-size: 18px;
+    }
+
+    .testsTable {
+        min-width: 650px;
+        font-size: 13px;
+    }
+
+    .testsTable th,
+    .testsTable td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .testInfo strong {
+        font-size: 15px;
+    }
+
+    .testDescription {
+        font-size: 13px;
+        margin-top: 5px;
+        max-width: 220px;
+    }
+
+    .loading,
+    .error {
+        padding: 30px;
+        font-size: 13px;
+    }
+    
+    .empty {
+        padding: 35px 20px;
+        font-size: 15px;
+    }
+}
+
+/* очень маленькие телефоны */
+@media (max-width: 360px) {
+    .testsTable {
+        min-width: 580px;
+        font-size: 12px;
+    }
+
+    .testsTable th,
+    .testsTable td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .testInfo strong {
+        font-size: 14px;
+    }
+
+    .testDescription {
+        font-size: 12px;
+        max-width: 200px;
+    }
+    
+    .empty {
+        padding: 30px 15px;
+        font-size: 14px;
+    }
+}
+
+/* альбомная ориентация */
+@media (max-width: 768px) and (orientation: landscape) {
+    .testDescription {
+        max-width: 300px;
+        font-size: 13px;
+    }
+}
+
+/* кнопка создать первый тест */
+.createButton {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    background-color: var(--color-buttonColor);
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: opacity 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.createButton:focus,
+.createButton:active,
+.createButton:focus-visible {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.createButton:hover {
+    opacity: 0.7;
+    text-decoration: none;
+}

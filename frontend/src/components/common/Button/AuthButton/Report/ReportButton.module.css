@@ -1,0 +1,30 @@
+@import "../../../../../style/variables.css";
+
+.reportButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+    background-color: var(--color-buttonColor);
+    border: none;
+    border-radius: 10px;
+    color: var(--color-text);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background-color 0.3s;
+}
+
+.reportButton:focus,
+.reportButton:active {
+    outline: none;
+}
+
+.reportButton:hover {
+    background-color: var(--color-hover);
+}

@@ -1,10 +1,12 @@
+@import "../../../../style/variables.css";
+
 .section {
-  background-color: #EAE7DC;
+  background-color: var(--color-background);
   padding: 0px 133px 27px 133px;
 }
 
 .title {
-  color: black;
+  color: var(--color-text);
   font-size: 20px;
   margin-bottom: 25px;
   margin-top: 0;
@@ -28,7 +30,7 @@
   padding-bottom: 10px;
 }
 
-/* ВАЖНО: переопределяем ширину карточки, но сохраняем отступы */
+/* переопределяем ширину карточки */
 .grid > * {
   flex: 0 0 auto;
   scroll-snap-align: center;
@@ -52,9 +54,10 @@
   border: none;
   font-size: 48px;
   cursor: pointer;
-  color: black;
+  color: var(--color-text);
   z-index: 10;
   padding: 10px;
+  transition: opacity 0.2s;
 }
 
 .scrollButtonLeft:active,
@@ -82,6 +85,106 @@
 .scrollButtonLeft:hover,
 .scrollButtonRight:hover {
   opacity: 0.7;
+}
+
+/* Стили карточки */
+.card {
+  background-color: var(--color-blockColor);
+  border-radius: 10px;
+  padding: 20px;
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover {
+  background-color: var(--color-blockColor);
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  background-color: var(--color-avatar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-avatar);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.avatarPlaceholder.show {
+  display: flex;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  text-align: center;
+  word-break: break-word;
+}
+
+.stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  background-color: var(--color-background);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Загрузка и пусто */
+.loading, .empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-muted);
+  font-size: 16px;
 }
 
 /* Планшет */

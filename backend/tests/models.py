@@ -4,9 +4,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 User = settings.AUTH_USER_MODEL
 
-
 class Pool(models.Model):
-    """Пулы вопросов пользователей"""
+    """Модель пула вопросов — контейнер для группировки вопросов пользователя"""
     name = models.CharField(max_length=100, verbose_name='Название пула')
     description = models.TextField(blank=True, verbose_name='Описание')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pools', verbose_name='Владелец')
@@ -23,7 +22,7 @@ class Pool(models.Model):
 
 
 class Question(models.Model):
-    """Вопросы"""
+    """Модель вопроса — может использоваться в пулах и тестах"""
     text = models.TextField(verbose_name='Текст вопроса')
     image = models.TextField(blank=True, null=True, verbose_name='Картинка вопроса (URL)')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions', verbose_name='Автор')
@@ -49,7 +48,7 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    """Варианты ответов"""
+    """Модель варианта ответа для вопроса (для вопросов с выбором ответа)"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers', verbose_name='Вопрос')
     text = models.CharField(max_length=500, verbose_name='Текст варианта')
     is_correct = models.BooleanField(default=False, verbose_name='Правильный ответ')
@@ -65,7 +64,7 @@ class Answer(models.Model):
 
 
 class PoolQuestion(models.Model):
-    """Связь пула с вопросами"""
+    """Модель связи пула с вопросами (многие-ко-многим)"""
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='pool_questions', verbose_name='Пул')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='pool_questions', verbose_name='Вопрос')
     added_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
@@ -81,7 +80,7 @@ class PoolQuestion(models.Model):
 
 
 class Test(models.Model):
-    """Тесты и опросы"""
+    """Модель теста или опроса"""
     title = models.CharField(max_length=200, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tests', verbose_name='Автор')
@@ -100,7 +99,7 @@ class Test(models.Model):
     )
     image = models.TextField(blank=True, null=True, verbose_name='Обложка (URL)')
     topics = models.JSONField(default=list, verbose_name='Темы')
-    access_token = models.CharField(max_length=50, blank=True, null=True, verbose_name='Токен доступа для приватного теста')  # Добавить эту строку
+    access_token = models.CharField(max_length=50, blank=True, null=True, verbose_name='Токен доступа для приватного теста')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     
@@ -114,7 +113,7 @@ class Test(models.Model):
 
 
 class TestQuestion(models.Model):
-    """Связь теста с вопросами"""
+    """Модель связи теста с вопросами (многие-ко-многим с порядковым номером)"""
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='test_questions', verbose_name='Тест')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='test_questions', verbose_name='Вопрос')
     order_index = models.IntegerField(verbose_name='Порядковый номер')
@@ -131,7 +130,7 @@ class TestQuestion(models.Model):
 
 
 class TestAttempt(models.Model):
-    """Попытки прохождения теста"""
+    """Модель попытки прохождения теста пользователем"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_attempts', verbose_name='Пользователь', null=True, blank=True)
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='attempts', verbose_name='Тест')
     score = models.IntegerField(verbose_name='Результат (%)')
@@ -146,11 +145,12 @@ class TestAttempt(models.Model):
         ordering = ['-started_at']
     
     def __str__(self):
-        return f"{self.user.login} - {self.test.title} - {self.score}%"
+        user_login = self.user.login if self.user else 'Аноним'
+        return f"{user_login} - {self.test.title} - {self.score}%"
 
 
 class TestRating(models.Model):
-    """Рейтинг теста (оценки пользователей)"""
+    """Модель оценки (рейтинга) теста пользователями"""
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='ratings', verbose_name='Тест')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_ratings', verbose_name='Пользователь')
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], verbose_name='Оценка (1-5)')
@@ -166,7 +166,7 @@ class TestRating(models.Model):
 
 
 class TestComment(models.Model):
-    """Комментарии к тестам"""
+    """Модель комментария к тесту"""
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='comments', verbose_name='Тест')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_comments', verbose_name='Пользователь')
     text = models.TextField(verbose_name='Текст комментария')
@@ -181,11 +181,14 @@ class TestComment(models.Model):
     def __str__(self):
         return f"{self.user.login} - {self.test.title[:30]}"
 
+
 class Report(models.Model):
-    """Репорты (жалобы)"""
+    """Модель жалобы (репорта) на тест, комментарий или пользователя"""
+    
     TARGET_TYPES = (
         ('test', 'Тест'),
         ('comment', 'Комментарий'),
+        ('user', 'Пользователь'),
     )
     
     STATUS_CHOICES = (
@@ -195,9 +198,11 @@ class Report(models.Model):
     )
     
     target_type = models.CharField(max_length=10, choices=TARGET_TYPES, verbose_name='Тип цели')
-    target_id = models.IntegerField(verbose_name='ID цели')
+    target_id = models.IntegerField(verbose_name='ID цели')  # Для comment - ID комментария
+    test_id = models.IntegerField(null=True, blank=True, verbose_name='ID теста (для комментариев)')  # ДОБАВИТЬ
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports', verbose_name='Пользователь')
     reason = models.TextField(verbose_name='Причина жалобы')
+    comment = models.TextField(blank=True, default='', verbose_name='Комментарий')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending', verbose_name='Статус')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')

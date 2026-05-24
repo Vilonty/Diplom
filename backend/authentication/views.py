@@ -12,11 +12,13 @@ from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, Pr
 from .models import FriendRequest
 from django.core.files.storage import default_storage
 import uuid
+from datetime import timedelta 
 
 User = get_user_model()
 
+
 class UserSearchView(APIView):
-    """Поиск пользователей по нику"""
+    """Поиск пользователей по логину или имени"""
     permission_classes = [AllowAny]
     
     def get(self, request):
@@ -31,12 +33,16 @@ class UserSearchView(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+
 class RegisterView(generics.CreateAPIView):
+    """Регистрация нового пользователя"""
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
+
 class LoginView(APIView):
+    """Авторизация пользователя"""
     permission_classes = [AllowAny]
     
     def post(self, request):
@@ -64,7 +70,9 @@ class LoginView(APIView):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
+
 class LogoutView(APIView):
+    """Выход из системы (блокировка refresh-токена)"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
@@ -76,7 +84,9 @@ class LogoutView(APIView):
         except Exception:
             return Response({'error': 'Неверный токен'}, status=400)
 
+
 class ProfileView(APIView):
+    """Профиль текущего пользователя (GET - получение, PATCH - обновление)"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -84,26 +94,23 @@ class ProfileView(APIView):
         return Response(serializer.data)
     
     def patch(self, request):
-        print("Полученные данные:", request.data)
-        print("Тип avatar:", type(request.data.get('avatar')))
-        print("Длина avatar:", len(request.data.get('avatar', '')))
-        
         serializer = ProfileUpdateSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             request.user.last_seen = timezone.now()
             request.user.save(update_fields=['last_seen'])
             return Response(UserSerializer(request.user).data)
-        print("Ошибки валидации:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserProfileView(APIView):
+    """Просмотр профиля другого пользователя"""
     permission_classes = [AllowAny]
     
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
-            serializer = UserSerializer(user)
+            serializer = UserSerializer(user) 
             return Response(serializer.data)
         except User.DoesNotExist:
             return Response(
@@ -111,7 +118,9 @@ class UserProfileView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class UpdateLastSeenView(APIView):
+    """Обновление времени последней активности пользователя"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
@@ -119,7 +128,9 @@ class UpdateLastSeenView(APIView):
         request.user.save(update_fields=['last_seen'])
         return Response({'message': 'updated'})
 
+
 class TopUsersView(generics.ListAPIView):
+    """Топ пользователей по количеству созданных тестов"""
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
     
@@ -133,8 +144,10 @@ class TopUsersView(generics.ListAPIView):
         ).order_by('-created_tests')[:10]
         
         return users
+
+
 class SendFriendRequestView(APIView):
-    """Отправить заявку в друзья"""
+    """Отправка заявки в друзья"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request, user_id):
@@ -148,14 +161,12 @@ class SendFriendRequestView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            # Проверяем, не являются ли уже друзьями
             if from_user in to_user.friends.all():
                 return Response(
                     {'error': 'Вы уже друзья'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            # Проверяем, есть ли уже заявка
             existing_request = FriendRequest.objects.filter(
                 from_user=from_user, 
                 to_user=to_user
@@ -168,7 +179,6 @@ class SendFriendRequestView(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 elif existing_request.status == 'rejected':
-                    # Если была отклонена, обновляем статус
                     existing_request.status = 'pending'
                     existing_request.save()
                     return Response({
@@ -176,7 +186,6 @@ class SendFriendRequestView(APIView):
                         'request_id': existing_request.id
                     }, status=status.HTTP_200_OK)
             
-            # Проверяем, есть ли входящая заявка от этого пользователя
             incoming_request = FriendRequest.objects.filter(
                 from_user=to_user,
                 to_user=from_user,
@@ -184,7 +193,6 @@ class SendFriendRequestView(APIView):
             ).first()
             
             if incoming_request:
-                # Если есть входящая заявка, сразу принимаем её
                 incoming_request.status = 'accepted'
                 incoming_request.save()
                 from_user.friends.add(to_user)
@@ -194,7 +202,6 @@ class SendFriendRequestView(APIView):
                     'is_friend': True
                 }, status=status.HTTP_200_OK)
             
-            # Создаём новую заявку
             friend_request = FriendRequest.objects.create(
                 from_user=from_user,
                 to_user=to_user,
@@ -212,19 +219,18 @@ class SendFriendRequestView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class AcceptFriendRequestView(APIView):
-    """Принять заявку в друзья"""
+    """Принятие заявки в друзья"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request, request_id):
         try:
             friend_request = FriendRequest.objects.get(id=request_id, to_user=request.user, status='pending')
             
-            # Добавляем в друзья
             friend_request.from_user.friends.add(friend_request.to_user)
             friend_request.to_user.friends.add(friend_request.from_user)
             
-            # Обновляем статус заявки
             friend_request.status = 'accepted'
             friend_request.save()
             
@@ -236,8 +242,9 @@ class AcceptFriendRequestView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class RejectFriendRequestView(APIView):
-    """Отклонить заявку в друзья"""
+    """Отклонение заявки в друзья"""
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, request_id):
@@ -254,8 +261,9 @@ class RejectFriendRequestView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class GetFriendsView(APIView):
-    """Получить список друзей"""
+    """Получение списка друзей текущего пользователя"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -263,8 +271,9 @@ class GetFriendsView(APIView):
         serializer = UserSerializer(friends, many=True)
         return Response(serializer.data)
 
+
 class GetFriendRequestsView(APIView):
-    """Получить входящие заявки в друзья"""
+    """Получение списка входящих заявок в друзья"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -280,18 +289,17 @@ class GetFriendRequestsView(APIView):
         
         return Response(data)
 
+
 class CheckFriendStatusView(APIView):
-    """Проверить статус дружбы с пользователем"""
+    """Проверка статуса дружбы с пользователем"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request, user_id):
         try:
             target_user = User.objects.get(id=user_id)
             
-            # Проверяем, являются ли друзьями
             is_friend = target_user in request.user.friends.all()
             
-            # Проверяем, есть ли исходящая заявка
             has_pending_request = FriendRequest.objects.filter(
                 from_user=request.user, 
                 to_user=target_user, 
@@ -308,8 +316,10 @@ class CheckFriendStatusView(APIView):
                 {'error': 'Пользователь не найден'},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
 class RemoveFriendView(APIView):
-    """Удалить из друзей"""
+    """Удаление пользователя из друзей"""
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, user_id):
@@ -321,8 +331,9 @@ class RemoveFriendView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден'}, status=404)
 
+
 class CancelFriendRequestView(APIView):
-    """Отменить отправленную заявку"""
+    """Отмена отправленной заявки в друзья"""
     permission_classes = [IsAuthenticated]
     
     def delete(self, request, user_id):
@@ -341,8 +352,9 @@ class CancelFriendRequestView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден'}, status=404)
 
+
 class GetUserFriendsView(APIView):
-    """Получить друзей конкретного пользователя"""
+    """Получение списка друзей конкретного пользователя"""
     permission_classes = [AllowAny]
     
     def get(self, request, user_id):
@@ -357,14 +369,16 @@ class GetUserFriendsView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class UserCompletedTestsView(APIView):
+    """Получение списка пройденных тестов пользователя"""
+    
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
             from tests.models import TestAttempt
             from django.db.models import Max
             
-            # Берем последнюю попытку по каждому тесту
             attempts = TestAttempt.objects.filter(
                 user=user, 
                 is_passed=True
@@ -396,30 +410,34 @@ class UserCompletedTestsView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден'}, status=404)
 
+
 class UserCreatedTestsView(APIView):
-    """Получить созданные тесты пользователя"""
+    """Получение списка созданных тестов пользователя (только открытые)"""
     permission_classes = [AllowAny]
     
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
             from tests.models import Test
+            # ДОЛЖНО БЫТЬ is_open=True
             tests = Test.objects.filter(author=user, is_open=True)
             
             data = []
             for test in tests:
                 data.append({
                     'id': test.id,
-                    'name': test.title,
-                    'type': 'опрос' if test.is_survey else 'тест',
-                    'questions': test.test_questions.count(),
-                    'completed': test.attempts.filter(is_passed=True).count(),
-                    'rating': test.ratings.aggregate(avg=Avg('rating'))['avg'] or 0,
-                    'description': test.description or 'Нет описания'
+                    'title': test.title,
+                    'is_survey': test.is_survey,
+                    'questions_count': test.test_questions.count(),
+                    'attempts_count': test.attempts.filter(is_passed=True).count(),
+                    'average_rating': test.ratings.aggregate(avg=Avg('rating'))['avg'] or 0,
+                    'description': test.description or 'Нет описания',
+                    'is_open': test.is_open
                 })
             return Response(data)
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден'}, status=404)
+
 
 class UploadAvatarView(APIView):
     """Загрузка аватара пользователя"""
@@ -438,18 +456,15 @@ class UploadAvatarView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Создаём папку для аватаров
         upload_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
         os.makedirs(upload_dir, exist_ok=True)
         
         ext = os.path.splitext(image_file.name)[1]
         filename = f"avatars/{request.user.id}_{uuid.uuid4().hex}{ext}"
         
-        # Сохраняем файл
         saved_path = default_storage.save(filename, image_file)
         file_url = default_storage.url(saved_path)
         
-        # Обновляем аватар пользователя
         request.user.avatar = file_url
         request.user.save(update_fields=['avatar'])
         
@@ -457,3 +472,208 @@ class UploadAvatarView(APIView):
             'url': file_url,
             'filename': filename
         }, status=status.HTTP_201_CREATED)
+
+
+class ReportUserView(APIView):
+    """Жалоба на пользователя"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        target_id = request.data.get('target_id')
+        reason = request.data.get('reason')
+        
+        if not target_id:
+            return Response(
+                {'error': 'ID пользователя обязателен'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not reason:
+            return Response(
+                {'error': 'Причина жалобы обязательна'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            target_user = User.objects.get(id=target_id)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Пользователь не найден'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Создаём жалобу (если у вас есть модель Report)
+        # Если модели нет, создайте её или используйте существующую
+        
+        from reports.models import Report  # если есть модель Report
+        
+        report = Report.objects.create(
+            reporter=request.user,
+            reported_user=target_user,
+            reason=reason,
+            created_at=timezone.now()
+        )
+        
+        return Response({
+            'message': 'Жалоба отправлена',
+            'report_id': report.id
+        }, status=status.HTTP_201_CREATED)
+
+class MuteUserView(APIView):
+    """Замутить пользователя (запрет на комментарии)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            reason = request.data.get('reason', '')
+            duration = request.data.get('duration')
+            duration_value = request.data.get('duration_value')
+            duration_unit = request.data.get('duration_unit')
+            
+            # Устанавливаем флаг is_muted в True
+            user.is_muted = True
+            user.mute_reason = reason
+            
+            if duration == 'permanent':
+                user.mute_permanent = True
+                user.mute_until = None
+            else:
+                user.mute_permanent = False
+                if duration_value and duration_unit:
+                    if duration_unit == 'hours':
+                        delta = timedelta(hours=int(duration_value))
+                    elif duration_unit == 'days':
+                        delta = timedelta(days=int(duration_value))
+                    elif duration_unit == 'weeks':
+                        delta = timedelta(weeks=int(duration_value))
+                    elif duration_unit == 'months':
+                        delta = timedelta(days=int(duration_value) * 30)
+                    else:
+                        delta = timedelta(days=1)
+                    user.mute_until = timezone.now() + delta
+            
+            user.save()
+            
+            # Проверяем что сохранилось
+            print(f"User {user.login} muted: {user.is_muted}, until: {user.mute_until}")
+            
+            if duration == 'permanent':
+                mute_text = "перманентно"
+            else:
+                mute_text = f"до {user.mute_until.strftime('%d.%m.%Y %H:%M')}" if user.mute_until else "навсегда"
+            
+            return Response({'message': f'Пользователь {user.login} замучен {mute_text}'})
+            
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class UnmuteUserView(APIView):
+    """Размутить пользователя"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            user.is_muted = False
+            user.mute_reason = ''
+            user.mute_until = None
+            user.mute_permanent = False
+            user.save()
+            
+            print(f"User {user.login} unmuted: {user.is_muted}")
+            
+            return Response({'message': f'Пользователь {user.login} размучен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class BanUserView(APIView):
+    """Забанить пользователя (запрет на создание тестов и комментарии)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            reason = request.data.get('reason', '')
+            duration = request.data.get('duration')
+            duration_value = request.data.get('duration_value')
+            duration_unit = request.data.get('duration_unit')
+            
+            # Бан
+            user.is_banned = True
+            user.ban_reason = reason
+            
+            # Также мутим при бане
+            user.is_muted = True
+            user.mute_reason = reason
+            
+            if duration == 'permanent':
+                user.ban_permanent = True
+                user.ban_until = None
+                user.mute_permanent = True
+                user.mute_until = None
+            else:
+                user.ban_permanent = False
+                user.mute_permanent = False
+                if duration_value and duration_unit:
+                    if duration_unit == 'hours':
+                        delta = timedelta(hours=int(duration_value))
+                    elif duration_unit == 'days':
+                        delta = timedelta(days=int(duration_value))
+                    elif duration_unit == 'weeks':
+                        delta = timedelta(weeks=int(duration_value))
+                    elif duration_unit == 'months':
+                        delta = timedelta(days=int(duration_value) * 30)
+                    else:
+                        delta = timedelta(days=1)
+                    ban_until_time = timezone.now() + delta
+                    user.ban_until = ban_until_time
+                    user.mute_until = ban_until_time
+            
+            user.save()
+            
+            ban_text = "перманентно" if duration == 'permanent' else f"до {user.ban_until.strftime('%d.%m.%Y %H:%M')}"
+            return Response({'message': f'Пользователь {user.login} забанен {ban_text}'})
+            
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class UnbanUserView(APIView):
+    """Разбанить пользователя (и снять мут)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            
+            # Снимаем бан
+            user.is_banned = False
+            user.ban_reason = ''
+            user.ban_until = None
+            user.ban_permanent = False
+            
+            # Снимаем мут
+            user.is_muted = False
+            user.mute_reason = ''
+            user.mute_until = None
+            user.mute_permanent = False
+            
+            user.save()
+            return Response({'message': f'Пользователь {user.login} разбанен и размучен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)

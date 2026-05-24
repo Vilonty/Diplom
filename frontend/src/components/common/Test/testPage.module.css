@@ -48,11 +48,18 @@
   background-color: #4C4C4C;
 }
 
-/* Кнопка репорта на изображении */
-.reportButton {
+/* Кнопки на картинке */
+.imageButtons {
   position: absolute;
   top: 15px;
   right: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* Кнопка репорта */
+.reportButton {
   width: 45px;
   height: 45px;
   background-color: #BE8F4C;
@@ -65,7 +72,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
   transition: background-color 0.3s;
 }
 
@@ -74,6 +80,33 @@
 }
 
 .reportButton:hover {
+  background-color: #a47a3f;
+}
+
+/* Кнопка удаления теста */
+.deleteTestButton {
+  width: auto;
+  min-width: 120px;
+  height: 45px;
+  padding: 0 15px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 10px;
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.deleteTestButton:focus {
+  outline: none;
+}
+
+.deleteTestButton:hover {
   background-color: #a47a3f;
 }
 
@@ -243,6 +276,7 @@
 .commentTop {
   display: flex;
   justify-content: space-between;
+  position: relative;
   align-items: center;
   margin-bottom: 10px;
 }
@@ -292,6 +326,14 @@
   color: black;
 }
 
+/* Действия с комментариями */
+.commentActions {
+  display: flex;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+/* Кнопка репорта комментария */
 .reportCommentButton {
   display: flex;
   align-items: center;
@@ -305,7 +347,6 @@
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-right: 10px;
   transition: background-color 0.3s;
 }
 
@@ -314,6 +355,31 @@
 }
 
 .reportCommentButton:hover {
+  background-color: #a47a3f;
+}
+
+/* Кнопка удаления комментария */
+.deleteCommentButton {
+  width: 30px;
+  height: 30px;
+  background-color: #BE8F4C;
+  border: none;
+  border-radius: 8px;
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.deleteCommentButton:focus {
+  outline: none;
+}
+
+.deleteCommentButton:hover {
   background-color: #a47a3f;
 }
 
@@ -368,9 +434,31 @@
     font-size: 24px;
     margin-left: 20px;
   }
+  
+  .imageButtons {
+    top: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+  
+  .deleteTestButton {
+    min-width: 100px;
+    height: 40px;
+    font-size: 12px;
+  }
+  
+  .reportButton {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 480px) {
+  .page {
+    padding: 15px;
+  }
+  
   .imageContainer {
     height: 220px;
   }
@@ -405,5 +493,69 @@
   
   .statsInfo {
     align-self: flex-end;
+  }
+  
+  .imageButtons {
+    top: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+  
+  .deleteTestButton {
+    min-width: 80px;
+    height: 35px;
+    font-size: 11px;
+    padding: 0 10px;
+  }
+  
+  .reportButton {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .reportCommentButton,
+  .deleteCommentButton {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+}
+
+/* Очень маленькие телефоны */
+@media (max-width: 360px) {
+  .testTitle {
+    font-size: 20px;
+  }
+  
+  .testDescription {
+    font-size: 12px;
+  }
+  
+  .startButton {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+  
+  .testDetails {
+    font-size: 10px;
+    padding: 10px;
+  }
+  
+  .commentsTitle {
+    font-size: 18px;
+    margin-left: 15px;
+  }
+  
+  .deleteTestButton {
+    min-width: 70px;
+    height: 30px;
+    font-size: 10px;
+  }
+  
+  .reportButton {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
   }
 }

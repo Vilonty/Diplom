@@ -16,6 +16,7 @@ interface Report {
         avatar: string | null;
     };
     reason: string;
+    comment: string;
     status: 'pending' | 'reviewed' | 'resolved';
     created_at: string;
 }
@@ -75,15 +76,6 @@ const AdminMain = () => {
         }
     };
 
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case 'pending': return 'На рассмотрении';
-            case 'reviewed': return 'Проверено';
-            case 'resolved': return 'Решено';
-            default: return status;
-        }
-    };
-
     const getStatusClass = (status: string) => {
         switch (status) {
             case 'pending': return styles.openReport;
@@ -94,7 +86,12 @@ const AdminMain = () => {
     };
 
     const getTypeText = (type: string) => {
-        return type === 'test' ? 'Тест' : 'Комментарий';
+        switch (type) {
+            case 'test': return 'Тест';
+            case 'comment': return 'Комментарий';
+            case 'user': return 'Пользователь';
+            default: return type;
+        }
     };
 
     const formatDate = (dateString: string) => {
@@ -110,6 +107,24 @@ const AdminMain = () => {
     const getStatusCount = (status: string) => {
         if (status === 'all') return reports.length;
         return reports.filter(r => r.status === status).length;
+    };
+
+    const getTargetLink = (report: Report) => {
+        if (report.target_type === 'user') {
+            return `/profile/${report.target_id}`;
+        }
+        if (report.target_type === 'comment') {
+            // Для комментариев используем test_id, если есть, иначе target_id
+            return `/test/${report.test_id || report.target_id}`;
+        }
+        return `/test/${report.target_id}`;
+    };
+    
+    const getButtonText = (report: Report) => {
+        if (report.target_type === 'user') {
+            return 'Перейти к профилю';
+        }
+        return 'Перейти к тесту';
     };
 
     if (loading) {
@@ -203,6 +218,12 @@ const AdminMain = () => {
                                         <div className={styles.reportReason}>
                                             <div className={styles.label}>Причина</div>
                                             <div className={styles.value}>{report.reason}</div>
+                                            {report.comment && (
+                                                <div className={styles.reportCommentInline}>
+                                                    <div className={styles.commentLabel}>Комментарий:</div>
+                                                    <div className={styles.commentValue}>{report.comment}</div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className={styles.reportStatus}>
@@ -221,10 +242,10 @@ const AdminMain = () => {
                                         <button 
                                             className={styles.linkButton}
                                             onClick={() => {
-                                                navigate(`/test/${report.target_id}`);
+                                                navigate(getTargetLink(report));
                                             }}
                                         >
-                                            Перейти
+                                            {getButtonText(report)}
                                         </button>
                                     </div>
                                 );

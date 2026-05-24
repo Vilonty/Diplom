@@ -30,18 +30,25 @@ const TestsList = () => {
     
     if (type === 'test') setSelectedType('tests');
     if (type === 'survey') setSelectedType('surveys');
-    if (topics) setSelectedTopics(topics.split(','));
+    if (topics) {
+      setSelectedTopics(topics.split(','));
+    } else {
+      setSelectedTopics([]);
+    }
     
     loadCards(search, sort, topics);
   }, [location.search]);
 
-  // Загружаем карточки при изменении selectedType
+  // Загружаем карточки при изменении selectedType - СБРАСЫВАЕМ ТЕМЫ
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const search = params.get('search');
     const sort = params.get('sort');
-    const topics = params.get('topics');
-    loadCards(search, sort, topics);
+    // ОЧИЩАЕМ ТЕМЫ ПРИ СМЕНЕ ТИПА
+    params.delete('topics');
+    setSelectedTopics([]);
+    navigate(`?${params.toString()}`, { replace: true });
+    loadCards(search, sort, null);
   }, [selectedType]);
 
   const loadCards = async (search?: string | null, sort?: string | null, topics?: string | null) => {
@@ -70,26 +77,7 @@ const TestsList = () => {
         );
       }
       
-      // Сортировка
-      if (sort === 'new') {
-        filteredData = filteredData.sort((a: any, b: any) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      } else if (sort === 'old') {
-        filteredData = filteredData.sort((a: any, b: any) => 
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-      } else if (sort === 'popular') {
-        filteredData = filteredData.sort((a: any, b: any) => 
-          (b.attempts_count || 0) - (a.attempts_count || 0)
-        );
-      } else if (sort === 'az') {
-        filteredData = filteredData.sort((a: any, b: any) => 
-          a.title.localeCompare(b.title)
-        );
-      }
-      
-      // Добавляем рейтинг и полный URL картинки для каждого теста
+      // Добавляем рейтинг для КАЖДОГО теста
       const cardsWithData = await Promise.all(filteredData.map(async (test: any) => {
         try {
           const ratingData = await getTestRating(test.id);
@@ -136,7 +124,27 @@ const TestsList = () => {
         }
       }));
       
-      setAllCards(cardsWithData);
+      // СОРТИРУЕМ ПОСЛЕ ПОЛУЧЕНИЯ РЕЙТИНГА
+      let sortedCards = cardsWithData;
+      if (sort === 'new') {
+        sortedCards = cardsWithData.sort((a: any, b: any) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      } else if (sort === 'old') {
+        sortedCards = cardsWithData.sort((a: any, b: any) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      } else if (sort === 'popular') {
+        sortedCards = cardsWithData.sort((a: any, b: any) => 
+          (b.average_rating || 0) - (a.average_rating || 0)
+        );
+      } else if (sort === 'az') {
+        sortedCards = cardsWithData.sort((a: any, b: any) => 
+          a.title.localeCompare(b.title)
+        );
+      }
+      
+      setAllCards(sortedCards);
       setDisplayedCards(12);
     } catch (error) {
       console.error('Ошибка загрузки:', error);
@@ -147,9 +155,7 @@ const TestsList = () => {
 
   const handleTypeChange = (type: 'tests' | 'surveys') => {
     setSelectedType(type);
-    const params = new URLSearchParams(location.search);
-    params.set('type', type === 'tests' ? 'test' : 'survey');
-    navigate(`?${params.toString()}`, { replace: true });
+    // Остальное делает useEffect
   };
 
   const handleTopicsApply = () => {
@@ -195,12 +201,23 @@ const TestsList = () => {
 
   const visibleCards = allCards.slice(0, displayedCards);
 
+  // Кастомная загрузка с картинкой
   if (loading) {
     return (
       <div className={styles.page}>
         <main className={styles.main}>
           <div className={styles.container}>
-            <div className={styles.loading}>Загрузка...</div>
+            <div className={styles.loadingContainer}>
+              <img 
+                src="http://localhost:8000/media/mainpage/loading.jpg" 
+                alt="Загрузка" 
+                className={styles.loadingImage}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <div className={styles.loadingText}>ЗАГРУЗКА</div>
+            </div>
           </div>
         </main>
       </div>
@@ -272,7 +289,13 @@ const TestsList = () => {
             <div className={styles.modalButtons}>
               <button 
                 className={styles.clearButton}
-                onClick={() => setSelectedTopics([])}
+                onClick={() => {
+                  setSelectedTopics([]);
+                  const params = new URLSearchParams(location.search);
+                  params.delete('topics');
+                  navigate(`?${params.toString()}`, { replace: true });
+                  setIsTopicsModalOpen(false);
+                }}
               >
                 Очистить
               </button>

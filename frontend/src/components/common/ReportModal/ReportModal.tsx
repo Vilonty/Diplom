@@ -4,7 +4,7 @@ import styles from './ReportModal.module.css';
 interface ReportModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (reason: string) => void;
+    onSubmit: (reason: string, comment: string) => void;
     title?: string;
     reasons?: string[];
 }
@@ -15,27 +15,37 @@ const ReportModal: React.FC<ReportModalProps> = ({
     onSubmit,
     title = "Пожаловаться",
     reasons = [
-        "Несоответствие теме",
-        "Неприемлемый контент",
+        "Оскорбительное поведение",
         "Спам",
         "Другое"
     ]
 }) => {
     const [selectedReason, setSelectedReason] = useState('');
+    const [comment, setComment] = useState('');
 
     const handleSubmit = () => {
         if (!selectedReason) {
             alert('Выберите причину жалобы');
             return;
         }
-        onSubmit(selectedReason);
+        
+        if (selectedReason === 'Другое' && !comment.trim()) {
+            alert('Пожалуйста, опишите причину жалобы подробнее');
+            return;
+        }
+        
+        onSubmit(selectedReason, comment);
         setSelectedReason('');
+        setComment('');
     };
 
     const handleClose = () => {
         setSelectedReason('');
+        setComment('');
         onClose();
     };
+
+    const isOtherSelected = selectedReason === 'Другое';
 
     if (!isOpen) return null;
 
@@ -57,6 +67,22 @@ const ReportModal: React.FC<ReportModalProps> = ({
                         </label>
                     ))}
                 </div>
+                
+                {isOtherSelected && (
+                    <div className={styles.modalComment}>
+                        <label className={styles.commentLabel}>
+                            Укажите причину подробнее <span className={styles.required}>*</span>
+                        </label>
+                        <textarea
+                            className={styles.commentTextarea}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Опишите проблему..."
+                            rows={3}
+                        />
+                    </div>
+                )}
+                
                 <div className={styles.modalButtons}>
                     <button className={styles.cancelButton} onClick={handleClose}>
                         Отмена

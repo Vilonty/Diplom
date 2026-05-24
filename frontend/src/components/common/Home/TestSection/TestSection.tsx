@@ -16,7 +16,8 @@ const TestSection = ({ title, type }: TestSectionProps) => {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Функция загрузки тестов
+  const BASE_URL = 'http://localhost:8000';
+
   const loadTests = async () => {
     setLoading(true);
     try {
@@ -29,16 +30,36 @@ const TestSection = ({ title, type }: TestSectionProps) => {
         data = await getRecentSurveys(8);
       }
       
-      // Добавляем рейтинг и полный URL картинки для каждого теста
       const testsWithRating = await Promise.all(data.map(async (test: any) => {
         try {
           const ratingData = await getTestRating(test.id);
-          // Формируем полный URL для картинки
-          const imageFullUrl = test.image ? `http://localhost:8000${test.image}` : null;
+          
+          // Формируем полный URL для картинки теста
+          let imageFullUrl = null;
+          if (test.image) {
+            if (test.image.startsWith('http')) {
+              imageFullUrl = test.image;
+            } else {
+              imageFullUrl = `${BASE_URL}${test.image}`;
+            }
+          } else if (test.image_url) {
+            if (test.image_url.startsWith('http')) {
+              imageFullUrl = test.image_url;
+            } else {
+              imageFullUrl = `${BASE_URL}${test.image_url}`;
+            }
+          }
+          
           // Формируем полный URL для аватара автора
-          const authorAvatarUrl = test.author_info?.avatar ? 
-            (test.author_info.avatar.startsWith('http') ? test.author_info.avatar : `http://localhost:8000${test.author_info.avatar}`) : 
-            undefined;
+          let authorAvatarUrl = null;
+          if (test.author_info?.avatar) {
+            if (test.author_info.avatar.startsWith('http')) {
+              authorAvatarUrl = test.author_info.avatar;
+            } else {
+              authorAvatarUrl = `${BASE_URL}${test.author_info.avatar}`;
+            }
+          }
+          
           return {
             ...test,
             average_rating: ratingData.average_rating || 0,
@@ -47,10 +68,31 @@ const TestSection = ({ title, type }: TestSectionProps) => {
             full_avatar_url: authorAvatarUrl
           };
         } catch (error) {
-          const imageFullUrl = test.image ? `http://localhost:8000${test.image}` : null;
-          const authorAvatarUrl = test.author_info?.avatar ? 
-            (test.author_info.avatar.startsWith('http') ? test.author_info.avatar : `http://localhost:8000${test.author_info.avatar}`) : 
-            undefined;
+          // Формируем полный URL для картинки теста при ошибке
+          let imageFullUrl = null;
+          if (test.image) {
+            if (test.image.startsWith('http')) {
+              imageFullUrl = test.image;
+            } else {
+              imageFullUrl = `${BASE_URL}${test.image}`;
+            }
+          } else if (test.image_url) {
+            if (test.image_url.startsWith('http')) {
+              imageFullUrl = test.image_url;
+            } else {
+              imageFullUrl = `${BASE_URL}${test.image_url}`;
+            }
+          }
+          
+          let authorAvatarUrl = null;
+          if (test.author_info?.avatar) {
+            if (test.author_info.avatar.startsWith('http')) {
+              authorAvatarUrl = test.author_info.avatar;
+            } else {
+              authorAvatarUrl = `${BASE_URL}${test.author_info.avatar}`;
+            }
+          }
+          
           return { 
             ...test, 
             average_rating: 0, 
@@ -69,15 +111,12 @@ const TestSection = ({ title, type }: TestSectionProps) => {
     }
   };
 
-  // Загружаем тесты при изменении типа
   useEffect(() => {
     loadTests();
   }, [type, refreshKey]);
 
-  // Слушаем событие обновления профиля
   useEffect(() => {
     const handleProfileUpdate = () => {
-      // Перезагружаем данные при обновлении профиля
       setRefreshKey(prev => prev + 1);
     };
     
@@ -85,7 +124,6 @@ const TestSection = ({ title, type }: TestSectionProps) => {
     return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
   }, []);
 
-  // Перезагружаем при фокусе на вкладке
   useEffect(() => {
     const handleFocus = () => {
       loadTests();
@@ -126,7 +164,17 @@ const TestSection = ({ title, type }: TestSectionProps) => {
       <section className={styles.section}>
         <div className={styles.container}>
           <h2 className={styles.title}>{title}</h2>
-          <div className={styles.loading}>Загрузка...</div>
+          <div className={styles.loadingContainer}>
+            <img 
+              src="http://localhost:8000/media/mainpage/loading.jpg" 
+              alt="Загрузка" 
+              className={styles.loadingImage}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <div className={styles.loadingText}>ЗАГРУЗКА</div>
+          </div>
         </div>
       </section>
     );
@@ -137,7 +185,7 @@ const TestSection = ({ title, type }: TestSectionProps) => {
       <section className={styles.section}>
         <div className={styles.container}>
           <h2 className={styles.title}>{title}</h2>
-          <div className={styles.empty}>Нет данных</div>
+          <div className={styles.empty}>Нет тестов</div>
         </div>
       </section>
     );
@@ -172,7 +220,7 @@ const TestSection = ({ title, type }: TestSectionProps) => {
                 testId={test.id.toString()}
                 authorId={test.author_info?.id?.toString() || ''}
                 imageUrl={test.full_image_url || undefined}
-                authorAvatar={test.full_avatar_url}
+                authorAvatar={test.full_avatar_url || undefined}
               />
             ))}
           </div>

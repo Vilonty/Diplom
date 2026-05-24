@@ -1,0 +1,482 @@
+@import "../../../style/variables.css";
+
+.page {
+    min-height: 100vh;
+    background-color: var(--color-background);
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Заголовок */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.backLink {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.backLink:hover {
+    background-color: var(--color-border);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--color-text);
+    margin: 0;
+    text-align: center;
+}
+
+.testLink {
+    text-decoration: none;
+}
+
+.testLink:hover {
+    text-decoration: underline;
+}
+
+.testType {
+    padding: 6px 16px;
+    background-color: var(--color-buttonColor);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+/* Описание */
+.description {
+    background-color: var(--color-blockColor);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    color: var(--color-text);
+    font-size: 16px;
+}
+
+/* Карточки статистики */
+.statsCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.statCard {
+    background-color: var(--color-blockColor);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.statValue {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 8px;
+}
+
+.statLabel {
+    font-size: 14px;
+    color: var(--color-text);
+    opacity: 0.7;
+}
+
+/* Секция попыток */
+.attemptsSection {
+    background-color: var(--color-blockColor);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.sectionTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 20px;
+}
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.attemptsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attemptsTable th,
+.attemptsTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.attemptsTable th {
+    background-color: var(--color-buttonColor);
+    font-weight: bold;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.attemptsTable th:hover,
+.attemptsTable th.sortable:hover {
+    background-color: var(--color-buttonColor);
+    opacity: 1;
+}
+
+.attemptsTable tbody tr:hover {
+    background-color: transparent;
+}
+
+.attemptsTable tbody tr:hover td {
+    background-color: transparent;
+}
+
+.userCell {
+    min-width: 180px;
+}
+
+.userLink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+.userLink:hover {
+    text-decoration: underline;
+}
+
+.userLinkDisabled {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text);
+    cursor: default;
+}
+
+.userAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--color-avatar);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.userAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-buttonColor);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+.score, .passed {
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+.detailsButton {
+    background-color: var(--color-buttonColor);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.detailsButton:hover {
+    background-color: var(--color-hover);
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: var(--color-blockColor);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--color-text);
+}
+
+.closeModal {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--color-text);
+    padding: 0 8px;
+}
+
+.closeModal:hover {
+    opacity: 0.7;
+}
+
+.modalBody {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modalUserInfo {
+    background-color: var(--color-buttonColor);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.modalUserInfo p {
+    margin: 8px 0;
+    color: var(--color-text);
+}
+
+.answersSection h4 {
+    font-size: 18px;
+    color: var(--color-text);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border-dark);
+}
+
+.answersList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.answerItem {
+    background-color: rgba(255, 215, 157, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.questionNumber {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-bottom: 5px;
+}
+
+.questionText {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 10px;
+}
+
+.answerLabel {
+    font-size: 13px;
+    color: var(--color-text);
+    margin-right: 8px;
+}
+
+.answerRow {
+    margin-bottom: 8px;
+}
+
+/* Текст ответов - чёрный */
+.correctAnswer {
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+.wrongAnswer {
+    color: var(--color-text);
+    font-weight: bold;
+}
+
+.correctAnswerText {
+    color: var(--color-text);
+}
+
+.answerStatusCorrect {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: var(--color-correct);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color-text);
+    display: inline-block;
+}
+
+.answerStatusWrong {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: var(--color-wrong);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color-text);
+    display: inline-block;
+}
+
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 20px;
+}
+
+.loadingImage {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+}
+
+.loadingText {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-text);
+    letter-spacing: 2px;
+}
+
+.error, .empty {
+    text-align: center;
+    padding: 60px;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+.backButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: var(--color-buttonColor);
+    border: none;
+    border-radius: 8px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.backButton:hover {
+    background-color: var(--color-hover);
+}
+
+.answersList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.answersList::-webkit-scrollbar-track {
+    background: var(--color-scrollbar-track);
+    border-radius: 10px;
+}
+
+.answersList::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: 10px;
+}
+
+.answersList::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .title {
+        font-size: 24px;
+    }
+    
+    .statsCards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .statValue {
+        font-size: 28px;
+    }
+    
+    .attemptsTable th,
+    .attemptsTable td {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .statsCards {
+        grid-template-columns: 1fr;
+    }
+    
+    .userLink span {
+        display: none;
+    }
+    
+    .userCell {
+        min-width: auto;
+    }
+}

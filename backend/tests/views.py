@@ -23,40 +23,39 @@ from .serializers import (
 User = get_user_model()
 
 
+# ==================== ПОИСК И ЗАГРУЗКИ ====================
+
 class TestSearchView(generics.ListAPIView):
+    """Поиск и фильтрация тестов (только открытые)"""
     permission_classes = [AllowAny]
     serializer_class = TestSerializer
     
     def get_queryset(self):
-        # Показываем только открытые тесты в общем поиске
         queryset = Test.objects.filter(is_open=True)
         
-        # Поиск по названию
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(title__icontains=search)
         
-        # Сортировка
         sort = self.request.query_params.get('sort', None)
         if sort == 'new':
             queryset = queryset.order_by('-created_at')
         elif sort == 'old':
             queryset = queryset.order_by('created_at')
         elif sort == 'popular':
+            # Сортировка по среднему рейтингу
             queryset = queryset.annotate(
-                attempts_count=Count('attempts')
-            ).order_by('-attempts_count')
+                avg_rating=models.Avg('ratings__rating')
+            ).order_by(models.functions.Coalesce('avg_rating', 0).desc(), '-created_at')
         elif sort == 'az':
             queryset = queryset.order_by('title')
         
-        # Фильтр по типу
         type_filter = self.request.query_params.get('type', None)
         if type_filter == 'test':
             queryset = queryset.filter(is_survey=False)
         elif type_filter == 'survey':
             queryset = queryset.filter(is_survey=True)
         
-        # Фильтр по темам (тегам)
         topics = self.request.query_params.getlist('topics', [])
         if topics:
             queryset = queryset.filter(topics__overlap=topics)
@@ -64,25 +63,8 @@ class TestSearchView(generics.ListAPIView):
         return queryset.distinct()
 
 
-class UserSearchView(APIView):
-    """Поиск пользователей по нику"""
-    permission_classes = [AllowAny]
-    
-    def get(self, request):
-        search = request.query_params.get('search', '')
-        if len(search) < 2:
-            return Response([])
-        
-        users = User.objects.filter(
-            Q(login__icontains=search) | Q(full_name__icontains=search)
-        )[:10]
-        
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-
 class UploadImageView(APIView):
-    """Загрузка изображений"""
+    """Загрузка изображений для вопросов и тестов"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
@@ -115,7 +97,10 @@ class UploadImageView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
+# ==================== ВОПРОСЫ ====================
+
 class QuestionViewSet(viewsets.ModelViewSet):
+    """CRUD для вопросов (только свои)"""
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
@@ -130,7 +115,48 @@ class QuestionViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
+class QuestionBatchCreateView(APIView):
+    """Массовое создание вопросов"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        questions_data = request.data.get('questions', [])
+        
+        if not questions_data:
+            return Response({'error': 'Нет данных для создания'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        created_questions = []
+        errors = []
+        
+        for idx, question_data in enumerate(questions_data):
+            serializer = QuestionCreateSerializer(
+                data=question_data,
+                context={'request': request}
+            )
+            
+            if serializer.is_valid():
+                question = serializer.save()
+                created_questions.append({
+                    'id': question.id,
+                    'text': question.text
+                })
+            else:
+                errors.append({
+                    'index': idx,
+                    'errors': serializer.errors
+                })
+        
+        return Response({
+            'created': created_questions,
+            'errors': errors,
+            'total_created': len(created_questions)
+        }, status=status.HTTP_201_CREATED if created_questions else status.HTTP_400_BAD_REQUEST)
+
+
+# ==================== ПУЛЫ ВОПРОСОВ ====================
+
 class PoolViewSet(viewsets.ModelViewSet):
+    """CRUD для пулов вопросов"""
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
@@ -146,6 +172,7 @@ class PoolViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], url_path='questions')
     def add_question(self, request, pk=None):
+        """Добавление вопроса в пул"""
         pool = self.get_object()
         question_id = request.data.get('question_id')
         
@@ -183,6 +210,7 @@ class PoolViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['delete'], url_path='questions/(?P<question_id>[^/.]+)')
     def remove_question(self, request, pk=None, question_id=None):
+        """Удаление вопроса из пула"""
         pool = self.get_object()
         
         try:
@@ -198,42 +226,53 @@ class PoolViewSet(viewsets.ModelViewSet):
             )
 
 
+class AvailablePoolsView(generics.ListAPIView):
+    """Список доступных пулов текущего пользователя"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = PoolSerializer
+    
+    def get_queryset(self):
+        return Pool.objects.filter(user=self.request.user)
+
+
+# ==================== ТЕСТЫ ====================
+
 class TestViewSet(viewsets.ModelViewSet):
+    """CRUD для тестов"""
     permission_classes = [AllowAny]
     
     def get_queryset(self):
-        # Для списка - только открытые
         return Test.objects.filter(is_open=True).distinct()
+    
+    def get_permissions(self):
+            if self.action == 'create':
+                return [IsAuthenticated()]
+            return [AllowAny()]
     
     def get_serializer_class(self):
         if self.action == 'create':
-            self.permission_classes = [IsAuthenticated]
             return TestCreateSerializer
         if self.action == 'retrieve':
             return TestDetailSerializer
         return TestSerializer
     
     def retrieve(self, request, *args, **kwargs):
-        """Получение теста по ID (включая приватные, если есть доступ)"""
+        """Получение теста с проверкой доступа к приватным"""
         try:
             test = Test.objects.get(id=kwargs['pk'])
         except Test.DoesNotExist:
             return Response({'error': 'Тест не найден'}, status=status.HTTP_404_NOT_FOUND)
         
-        # Проверка доступа к приватному тесту
         if not test.is_open:
             has_access = False
             
-            # Автор имеет доступ
             if request.user.is_authenticated and request.user == test.author:
                 has_access = True
             
-            # Проверяем токен доступа в query параметрах
             access_token = request.query_params.get('token', None)
             if test.access_token and access_token == test.access_token:
                 has_access = True
             
-            # Проверяем, есть ли у пользователя незавершённая попытка
             if request.user.is_authenticated:
                 existing_attempt = TestAttempt.objects.filter(
                     user=request.user,
@@ -253,54 +292,12 @@ class TestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def perform_create(self, serializer):
-        # Генерируем уникальный токен для приватного теста
-        import uuid
         access_token = str(uuid.uuid4())[:8] if not serializer.validated_data.get('is_open', True) else None
         serializer.save(author=self.request.user, access_token=access_token)
 
 
-class TestAttemptView(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request, test_id):
-        try:
-            test = Test.objects.get(id=test_id)
-            
-            if test.is_survey:
-                score = 0
-                is_passed = True
-            else:
-                score = request.data.get('score', 0)
-                is_passed = score >= test.passing_score
-            
-            answers = request.data.get('answers', {})
-            
-            attempt = TestAttempt.objects.create(
-                user=request.user,
-                test=test,
-                score=score,
-                is_passed=is_passed,
-                answers=answers,
-                finished_at=request.data.get('finished_at')
-            )
-            
-            if not test.is_survey:
-                for question_id in answers.keys():
-                    try:
-                        question = Question.objects.get(id=question_id)
-                        question.usage_count += 1
-                        question.save(update_fields=['usage_count'])
-                    except Question.DoesNotExist:
-                        pass
-            
-            serializer = TestAttemptSerializer(attempt)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
-        except Test.DoesNotExist:
-            return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
 class UserTestsView(generics.ListAPIView):
+    """Список тестов текущего пользователя (автора)"""
     permission_classes = [IsAuthenticated]
     serializer_class = TestSerializer
     
@@ -308,38 +305,84 @@ class UserTestsView(generics.ListAPIView):
         return Test.objects.filter(author=self.request.user)
 
 
-class AvailablePoolsView(generics.ListAPIView):
+class MyTestsView(generics.ListAPIView):
+    """Все тесты автора (включая приватные) - только для самого автора"""
     permission_classes = [IsAuthenticated]
-    serializer_class = PoolSerializer
+    serializer_class = TestSerializer
     
     def get_queryset(self):
-        return Pool.objects.filter(user=self.request.user)
+        user_id = self.kwargs.get('user_id')
+        if not self.request.user.is_authenticated or self.request.user.id != user_id:
+            return Test.objects.none()
+        return Test.objects.filter(author_id=user_id).annotate(
+            attempts_count=Count('attempts', distinct=True),
+            average_rating=Avg('ratings__rating')
+        )
 
+
+class CreatedTestsView(generics.ListAPIView):
+    """Открытые тесты автора (для просмотра другими)"""
+    permission_classes = [AllowAny]
+    serializer_class = TestSerializer
+    
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return Test.objects.filter(
+            author_id=user_id, 
+            is_open=True  # ТОЛЬКО ОТКРЫТЫЕ
+        ).annotate(
+            attempts_count=Count('attempts', distinct=True),
+            average_rating=Avg('ratings__rating')
+        )
+
+
+class CompletedTestsView(generics.ListAPIView):
+    """Пройденные тесты пользователя"""
+    permission_classes = [AllowAny]
+    serializer_class = TestAttemptSerializer
+    
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        return TestAttempt.objects.filter(
+            user_id=user_id, 
+            finished_at__isnull=False
+        ).select_related('test').order_by('-finished_at')
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        data = []
+        for item, attempt in zip(serializer.data, queryset):
+            item['is_open'] = attempt.test.is_open
+            item['started_at'] = attempt.started_at.isoformat() if attempt.started_at else None
+            item['finished_at'] = attempt.finished_at.isoformat() if attempt.finished_at else None
+            data.append(item)
+        
+        return Response(data)
+
+
+# ==================== ПРОХОЖДЕНИЕ ТЕСТОВ ====================
 
 class StartTestView(APIView):
+    """Начало прохождения теста (создание попытки)"""
     permission_classes = [AllowAny]
     
     def post(self, request, test_id):
         try:
             test = Test.objects.get(id=test_id)
             
-            # Проверка приватности теста
             if not test.is_open:
-                # Для приватного теста проверяем специальный токен доступа
                 access_token = request.data.get('access_token', None) or request.query_params.get('token', None)
                 
-                # Проверяем, имеет ли пользователь доступ
                 has_access = False
                 
-                # Автор всегда имеет доступ
                 if request.user.is_authenticated and request.user == test.author:
                     has_access = True
                 
-                # Проверяем токен доступа
                 if test.access_token and access_token == test.access_token:
                     has_access = True
                 
-                # Если есть сохранённая попытка у пользователя
                 if request.user.is_authenticated:
                     existing_attempt = TestAttempt.objects.filter(
                         user=request.user,
@@ -355,7 +398,6 @@ class StartTestView(APIView):
                         status=status.HTTP_403_FORBIDDEN
                     )
             
-            # Проверка лимита попыток
             if test.attempts_limit > 0:
                 if request.user.is_authenticated:
                     attempts_count = TestAttempt.objects.filter(
@@ -368,7 +410,6 @@ class StartTestView(APIView):
                             status=status.HTTP_400_BAD_REQUEST
                         )
             
-            # Создаём попытку
             attempt = TestAttempt.objects.create(
                 user=request.user if request.user.is_authenticated else None,
                 test=test,
@@ -390,6 +431,7 @@ class StartTestView(APIView):
 
 
 class GetQuestionView(APIView):
+    """Получение вопроса по индексу"""
     permission_classes = [AllowAny]
     
     def get(self, request, test_id, question_index):
@@ -405,7 +447,6 @@ class GetQuestionView(APIView):
             
             answers = list(question.answers.values('id', 'text', 'is_correct', 'order_index'))
             
-            # Получаем URL картинки
             image_url = None
             if question.image:
                 if hasattr(question.image, 'url'):
@@ -433,11 +474,11 @@ class GetQuestionView(APIView):
 
 
 class SubmitAnswerView(APIView):
+    """Отправка ответа на вопрос"""
     permission_classes = [AllowAny]
     
     def post(self, request, attempt_id, question_id):
         try:
-            # Убираем фильтрацию по user для неавторизованных
             if request.user.is_authenticated:
                 attempt = TestAttempt.objects.get(id=attempt_id, user=request.user)
             else:
@@ -449,7 +490,6 @@ class SubmitAnswerView(APIView):
             answer_data = request.data.get('answer')
             is_correct = False
             
-            # Для опроса - все ответы правильные
             if test.is_survey:
                 is_correct = True
                 user_answer_value = answer_data
@@ -488,11 +528,11 @@ class SubmitAnswerView(APIView):
 
 
 class FinishTestView(APIView):
+    """Завершение теста и расчёт результата"""
     permission_classes = [AllowAny]
     
     def post(self, request, attempt_id):
         try:
-            # Убираем фильтрацию по user
             if request.user.is_authenticated:
                 attempt = TestAttempt.objects.get(id=attempt_id, user=request.user)
             else:
@@ -503,7 +543,6 @@ class FinishTestView(APIView):
             total_questions = test.test_questions.count()
             correct_answers = 0
             
-            # Для опроса - не считаем правильные ответы
             if test.is_survey:
                 score = 0
                 is_passed = True
@@ -520,7 +559,6 @@ class FinishTestView(APIView):
             attempt.finished_at = timezone.now()
             attempt.save()
             
-            # Обновляем счётчики использования вопросов
             for question_id in attempt.answers.keys():
                 try:
                     question = Question.objects.get(id=question_id)
@@ -544,6 +582,7 @@ class FinishTestView(APIView):
 
 
 class GetAttemptView(APIView):
+    """Получение информации о попытке"""
     permission_classes = [AllowAny]
     
     def get(self, request, attempt_id):
@@ -587,7 +626,52 @@ class GetAttemptView(APIView):
             return Response({'error': 'Попытка не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class TestAttemptView(APIView):
+    """Сохранение результатов попытки (альтернативный метод)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, test_id):
+        try:
+            test = Test.objects.get(id=test_id)
+            
+            if test.is_survey:
+                score = 0
+                is_passed = True
+            else:
+                score = request.data.get('score', 0)
+                is_passed = score >= test.passing_score
+            
+            answers = request.data.get('answers', {})
+            
+            attempt = TestAttempt.objects.create(
+                user=request.user,
+                test=test,
+                score=score,
+                is_passed=is_passed,
+                answers=answers,
+                finished_at=request.data.get('finished_at')
+            )
+            
+            if not test.is_survey:
+                for question_id in answers.keys():
+                    try:
+                        question = Question.objects.get(id=question_id)
+                        question.usage_count += 1
+                        question.save(update_fields=['usage_count'])
+                    except Question.DoesNotExist:
+                        pass
+            
+            serializer = TestAttemptSerializer(attempt)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        except Test.DoesNotExist:
+            return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# ==================== КОММЕНТАРИИ И ОЦЕНКИ ====================
+
 class TestCommentsView(APIView):
+    """Получение и создание комментариев к тесту"""
     permission_classes = [AllowAny]
     
     def get(self, request, test_id):
@@ -624,6 +708,8 @@ class TestCommentsView(APIView):
 
 
 class RateTestView(APIView):
+    """Оценка теста (рейтинг)"""
+    
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated()]
@@ -644,7 +730,7 @@ class RateTestView(APIView):
                     'previous_rating': existing_rating.rating
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            rating_obj = TestRating.objects.create(
+            TestRating.objects.create(
                 test=test,
                 user=request.user,
                 rating=rating
@@ -683,51 +769,82 @@ class RateTestView(APIView):
             return Response({'error': 'Тест не найден'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class QuestionBatchCreateView(APIView):
+# ==================== РЕПОРТЫ (ЖАЛОБЫ) ====================
+
+class ReportUserView(APIView):
+    """Жалоба на пользователя"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        questions_data = request.data.get('questions', [])
+        target_id = request.data.get('target_id')
+        reason = request.data.get('reason')
+        comment = request.data.get('comment', '')  # УБЕДИСЬ ЧТО ЭТА СТРОКА ЕСТЬ
         
-        if not questions_data:
-            return Response({'error': 'Нет данных для создания'}, status=status.HTTP_400_BAD_REQUEST)
+        print("=== REPORT USER DEBUG ===")
+        print(f"target_id: {target_id}")
+        print(f"reason: {reason}")
+        print(f"comment: {comment}")
+        print("========================")
         
-        created_questions = []
-        errors = []
-        
-        for idx, question_data in enumerate(questions_data):
-            serializer = QuestionCreateSerializer(
-                data=question_data,
-                context={'request': request}
+        if not target_id:
+            return Response(
+                {'error': 'ID пользователя обязателен'},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            
-            if serializer.is_valid():
-                question = serializer.save()
-                created_questions.append({
-                    'id': question.id,
-                    'text': question.text
-                })
-            else:
-                errors.append({
-                    'index': idx,
-                    'errors': serializer.errors
-                })
+        
+        if not reason:
+            return Response(
+                {'error': 'Причина жалобы обязательна'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            target_user = User.objects.get(id=target_id)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Пользователь не найден'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Проверяем, не отправлял ли пользователь уже жалобу на этого пользователя
+        existing_report = Report.objects.filter(
+            user=request.user,
+            target_type='user',
+            target_id=target_id,
+            status='pending'
+        ).first()
+        
+        if existing_report:
+            return Response(
+                {'error': 'Вы уже отправляли жалобу на этого пользователя'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Создаём жалобу с комментарием
+        report = Report.objects.create(
+            target_type='user',
+            target_id=target_id,
+            user=request.user,
+            reason=reason,
+            comment=comment,  # УБЕДИСЬ ЧТО ЭТА СТРОКА ЕСТЬ
+            status='pending'
+        )
         
         return Response({
-            'created': created_questions,
-            'errors': errors,
-            'total_created': len(created_questions)
-        }, status=status.HTTP_201_CREATED if created_questions else status.HTTP_400_BAD_REQUEST)
-
+            'message': 'Жалоба отправлена',
+            'report_id': report.id
+        }, status=status.HTTP_201_CREATED)
 
 class ReportView(APIView):
-    """Создание репорта (жалобы)"""
+    """Создание жалобы на тест или комментарий"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
         target_type = request.data.get('target_type')
         target_id = request.data.get('target_id')
+        test_id = request.data.get('test_id', None)  # ДОБАВИТЬ - ID теста для комментария
         reason = request.data.get('reason')
+        comment = request.data.get('comment', '')
         
         if not target_type or not target_id or not reason:
             return Response(
@@ -741,27 +858,48 @@ class ReportView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Проверяем, существует ли цель
         if target_type == 'test':
             if not Test.objects.filter(id=target_id).exists():
                 return Response(
                     {'error': 'Тест не найден'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-        else:  # comment
+        else:
             if not TestComment.objects.filter(id=target_id).exists():
                 return Response(
                     {'error': 'Комментарий не найден'},
                     status=status.HTTP_404_NOT_FOUND
                 )
         
-        report = Report.objects.create(
+        # Проверяем, не отправлял ли пользователь уже жалобу
+        existing_report = Report.objects.filter(
+            user=request.user,
             target_type=target_type,
             target_id=target_id,
-            user=request.user,
-            reason=reason,
             status='pending'
-        )
+        ).first()
+        
+        if existing_report:
+            return Response(
+                {'error': 'Вы уже отправляли жалобу на этот объект'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # СОЗДАЁМ ЖАЛОБУ
+        report_data = {
+            'target_type': target_type,
+            'target_id': target_id,
+            'user': request.user,
+            'reason': reason,
+            'comment': comment,
+            'status': 'pending'
+        }
+        
+        # Для комментария сохраняем ID теста
+        if target_type == 'comment' and test_id:
+            report_data['test_id'] = test_id
+        
+        report = Report.objects.create(**report_data)
         
         return Response({
             'id': report.id,
@@ -770,11 +908,10 @@ class ReportView(APIView):
 
 
 class ReportListView(APIView):
-    """Просмотр репортов (только для админа)"""
+    """Список жалоб (только для администратора)"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        # Проверка на админа
         if request.user.status != 'admin':
             return Response(
                 {'error': 'Доступ запрещен'},
@@ -792,7 +929,7 @@ class ReportListView(APIView):
 
 
 class ReportDetailView(APIView):
-    """Просмотр и обновление статуса репорта (только для админа)"""
+    """Просмотр и обновление статуса жалобы (только для администратора)"""
     permission_classes = [IsAuthenticated]
     
     def get_object(self, report_id):
@@ -844,61 +981,199 @@ class ReportDetailView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-class MyTestsView(generics.ListAPIView):
-    """Все тесты автора (включая приватные) - только для самого автора"""
+#баны и муты 
+
+class MuteUserView(APIView):
+    """Замутить пользователя (запрет на комментарии)"""
     permission_classes = [IsAuthenticated]
-    serializer_class = TestSerializer
     
-    def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        # Только сам пользователь может видеть свои тесты
-        if not self.request.user.is_authenticated or self.request.user.id != user_id:
-            return Test.objects.none()
-        return Test.objects.filter(author_id=user_id).annotate(
-            attempts_count=Count('attempts', distinct=True),
-            average_rating=Avg('ratings__rating')
-        )
-
-
-class CreatedTestsView(generics.ListAPIView):
-    """Только открытые тесты автора (для просмотра другими пользователями)"""
-    permission_classes = [AllowAny]
-    serializer_class = TestSerializer
-    
-    def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        # Должен возвращать ТОЛЬКО is_open=True
-        return Test.objects.filter(
-            author_id=user_id, 
-            is_open=True  # Убедись, что это условие есть
-        ).annotate(
-            attempts_count=Count('attempts', distinct=True),
-            average_rating=Avg('ratings__rating')
-        )
-
-
-class CompletedTestsView(generics.ListAPIView):
-    """Пройденные тесты пользователя"""
-    permission_classes = [AllowAny]
-    serializer_class = TestAttemptSerializer
-    
-    def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        return TestAttempt.objects.filter(
-            user_id=user_id, 
-            finished_at__isnull=False
-        ).select_related('test').order_by('-finished_at')
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
         
-        # Добавляем is_open, started_at, finished_at в каждый объект
-        data = []
-        for item, attempt in zip(serializer.data, queryset):
-            item['is_open'] = attempt.test.is_open
-            item['started_at'] = attempt.started_at.isoformat() if attempt.started_at else None
-            item['finished_at'] = attempt.finished_at.isoformat() if attempt.finished_at else None
-            data.append(item)
+        try:
+            user = User.objects.get(id=user_id)
+            reason = request.data.get('reason', '')
+            user.is_muted = True
+            user.mute_reason = reason
+            user.save()
+            return Response({'message': f'Пользователь {user.login} замучен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class UnmuteUserView(APIView):
+    """Размутить пользователя"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
         
-        return Response(data)
+        try:
+            user = User.objects.get(id=user_id)
+            user.is_muted = False
+            user.mute_reason = ''
+            user.save()
+            return Response({'message': f'Пользователь {user.login} размучен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class BanUserView(APIView):
+    """Забанить пользователя (запрет на создание тестов)"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            reason = request.data.get('reason', '')
+            user.is_banned = True
+            user.ban_reason = reason
+            user.is_active = False
+            user.save()
+            return Response({'message': f'Пользователь {user.login} забанен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+
+class UnbanUserView(APIView):
+    """Разбанить пользователя"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, user_id):
+        if request.user.status != 'admin':
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            user.is_banned = False
+            user.ban_reason = ''
+            user.is_active = True
+            user.save()
+            return Response({'message': f'Пользователь {user.login} разбанен'})
+        except User.DoesNotExist:
+            return Response({'error': 'Пользователь не найден'}, status=404)
+
+class DeleteCommentView(APIView):
+    """Удаление комментария (только для админа)"""
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request, comment_id):
+        # Проверка прав администратора
+        if request.user.status != 'admin':
+            return Response(
+                {'error': 'У вас нет прав для удаления комментариев'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        try:
+            comment = TestComment.objects.get(id=comment_id)
+            comment.delete()
+            return Response(
+                {'message': 'Комментарий успешно удалён'},
+                status=status.HTTP_200_OK
+            )
+        except TestComment.DoesNotExist:
+            return Response(
+                {'error': 'Комментарий не найден'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+class TestStatsView(APIView):
+    """Статистика по тесту для автора"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, test_id):
+        try:
+            test = Test.objects.get(id=test_id)
+        except Test.DoesNotExist:
+            return Response({'error': 'Тест не найден'}, status=404)
+        
+        # Только автор может смотреть статистику
+        if request.user != test.author:
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        attempts = TestAttempt.objects.filter(test=test, finished_at__isnull=False)
+        
+        total_attempts = attempts.count()
+        passed_attempts = attempts.filter(is_passed=True).count()
+        average_score = attempts.aggregate(avg=Avg('score'))['avg'] or 0
+        
+        attempts_data = []
+        for attempt in attempts.order_by('-finished_at'):
+            # Обработка анонимных пользователей (user может быть None)
+            if attempt.user:
+                user_data = {
+                    'id': attempt.user.id,
+                    'login': attempt.user.login,
+                    'full_name': attempt.user.full_name,
+                    'avatar': attempt.user.avatar,
+                }
+            else:
+                user_data = {
+                    'id': 0,
+                    'login': 'Аноним',
+                    'full_name': 'Анонимный пользователь',
+                    'avatar': None,
+                }
+            
+            attempts_data.append({
+                'id': attempt.id,
+                'user': user_data,
+                'score': attempt.score,
+                'is_passed': attempt.is_passed,
+                'started_at': attempt.started_at,
+                'finished_at': attempt.finished_at,
+                'answers': attempt.answers
+            })
+        
+        return Response({
+            'id': test.id,
+            'title': test.title,
+            'description': test.description,
+            'is_survey': test.is_survey,
+            'questions_count': test.test_questions.count(),
+            'total_attempts': total_attempts,
+            'passed_attempts': passed_attempts,
+            'average_score': round(average_score, 1),
+            'attempts': attempts_data
+        })
+
+class AttemptDetailsView(APIView):
+    """Детали попытки с ответами на вопросы"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, attempt_id):
+        try:
+            attempt = TestAttempt.objects.get(id=attempt_id)
+        except TestAttempt.DoesNotExist:
+            return Response({'error': 'Попытка не найдена'}, status=404)
+        
+        # Только автор теста может смотреть детали
+        if request.user != attempt.test.author:
+            return Response({'error': 'Нет прав'}, status=403)
+        
+        answers_details = []
+        test_questions = attempt.test.test_questions.select_related('question').all().order_by('order_index')
+        
+        for tq in test_questions:
+            question = tq.question
+            answer_data = attempt.answers.get(str(question.id), {})
+            user_answer = answer_data.get('answer', '')
+            is_correct = answer_data.get('is_correct', False)
+            
+            answers_details.append({
+                'question_id': question.id,
+                'question_text': question.text,
+                'user_answer': user_answer or '(не указан)',
+                'is_correct': is_correct
+            })
+        
+        return Response({
+            'attempt_id': attempt.id,
+            'answers_details': answers_details
+        })

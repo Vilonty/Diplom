@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../api/axios';
 import { createTest, uploadImage, createQuestionsBatch, createQuestion } from '../../../api/tests';
 import styles from './CreateMain.module.css';
 import QuestionBuilder from './Questions/QuestionBuilder';
@@ -22,6 +23,13 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
   const navigate = useNavigate();
   const isSurvey = type === 'survey';
   
+  // Проверка бана
+  const [isBanned, setIsBanned] = useState(false);
+  const [banReason, setBanReason] = useState('');
+  const [banUntil, setBanUntil] = useState<string | null>(null);
+  const [banPermanent, setBanPermanent] = useState(false);
+  const [checkingBan, setCheckingBan] = useState(true);
+  
   // Базовые поля
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -34,6 +42,8 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
   const [timeLimit, setTimeLimit] = useState('');
   const [noTimeLimit, setNoTimeLimit] = useState(false);
   const [passingScore, setPassingScore] = useState('70');
+  const [attemptsLimit, setAttemptsLimit] = useState(''); // НОВОЕ ПОЛЕ
+  const [noAttemptsLimit, setNoAttemptsLimit] = useState(false); // Без ограничения попыток
   
   // Вопросы
   const [questions, setQuestions] = useState<Question[]>([
@@ -44,6 +54,32 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const topicsList = ['наука', 'спорт', 'сериалы', 'анимации', 'игры'];
+
+  useEffect(() => {
+    checkBanStatus();
+  }, []);
+
+  const checkBanStatus = async () => {
+    try {
+      const profile = await api.get('/auth/profile/');
+      if (profile.data.is_banned) {
+        setIsBanned(true);
+        setBanReason(profile.data.ban_reason || '');
+        setBanUntil(profile.data.ban_until);
+        setBanPermanent(profile.data.ban_permanent || false);
+      }
+    } catch (error) {
+      console.error('Ошибка проверки бана:', error);
+    } finally {
+      setCheckingBan(false);
+    }
+  };
+
+  const getBanUntilText = () => {
+    if (!banUntil) return '';
+    const date = new Date(banUntil);
+    return date.toLocaleString('ru-RU');
+  };
 
   const toggleTopic = (topic: string) => {
     setTopics(prev => prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]);
@@ -95,10 +131,6 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
           alert(`Вопрос ${i + 1}: Текст вопроса должен содержать минимум 10 символов`);
           return false;
         }
-        if (!q.questionImage) {
-          alert(`Вопрос ${i + 1}: Добавьте картинку к вопросу`);
-          return false;
-        }
       }
       
       if (!isSurvey) {
@@ -144,6 +176,12 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
       
       if (!passingScore || parseInt(passingScore) < 0 || parseInt(passingScore) > 100) {
         alert('Укажите проходной балл (от 0 до 100)');
+        return false;
+      }
+      
+      // Валидация лимита попыток
+      if (!noAttemptsLimit && (!attemptsLimit || parseInt(attemptsLimit) <= 0)) {
+        alert('Укажите ограничение попыток или отметьте "без ограничения"');
         return false;
       }
     }
@@ -251,7 +289,7 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
         is_survey: isSurvey,
         time_limit: isSurvey ? 0 : (noTimeLimit ? 0 : (parseInt(timeLimit) || 0)),
         passing_score: isSurvey ? 0 : parseInt(passingScore),
-        attempts_limit: 0,
+        attempts_limit: isSurvey ? 0 : (noAttemptsLimit ? 0 : (parseInt(attemptsLimit) || 0)), // ДОБАВЛЕНО
         image: coverImageUrl,
         topics: topics,
         question_ids: questionIds
@@ -269,8 +307,39 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
     }
   };
 
+  // Если проверка бана ещё идёт
+  if (checkingBan) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>Загрузка...</div>
+      </div>
+    );
+  }
+
+  // Если пользователь забанен - показываем сообщение
+  if (isBanned) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.bannedMessage}>
+          <div className={styles.bannedText}>Ваш аккаунт забанен</div>
+          {banReason && <div className={styles.bannedReason}>Причина: {banReason}</div>}
+          {banUntil && !banPermanent && (
+            <div className={styles.bannedUntil}>До: {getBanUntilText()}</div>
+          )}
+          {banPermanent && <div className={styles.bannedPermanent}>Перманентно</div>}
+          <button 
+            className={styles.backButton}
+            onClick={() => navigate('/')}
+          >
+            Вернуться на главную
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className={styles.container}>
       <h2>создание {isSurvey ? 'опроса' : 'теста'}</h2>
       <form onSubmit={handleSubmit} className={styles.createForm}>
         
@@ -377,6 +446,23 @@ const CreateTestOrSurvey: React.FC<CreateTestOrSurveyProps> = ({ type }) => {
                 min="0" 
                 max="100" 
               />
+            </div>
+
+            {/* НОВОЕ ПОЛЕ - ограничение попыток */}
+            <div className={styles.formGroup}>
+              <span className={styles.groupLabel}>ограничение попыток</span>
+              <input 
+                type="number" 
+                value={attemptsLimit} 
+                onChange={e => setAttemptsLimit(e.target.value)} 
+                placeholder="например: 3" 
+                disabled={noAttemptsLimit}
+                min="1"
+              />
+              <label className={styles.checkboxLabel}>
+                <input type="checkbox" checked={noAttemptsLimit} onChange={e => setNoAttemptsLimit(e.target.checked)} />
+                <span>без ограничения попыток</span>
+              </label>
             </div>
           </>
         )}

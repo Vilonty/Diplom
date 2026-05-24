@@ -11,6 +11,7 @@ import TestPage from './pages/test/testpage/TestPage';
 import AdminPanel from './pages/admin/AdminPanel';
 import TestList from './pages/testlist/TestList';
 import TestResult from './pages/test/result/TestResultPage';
+import TestStastPage from './pages/teststatspage/TestStatsPage';
 import QuestionRouter from './pages/test/questions/QuestionRouter';
 import './App.css';
 
@@ -40,6 +41,8 @@ function App() {
                 <Route path="/testlist" element={<TestList />} />
                 <Route path="/test/:testId/result" element={<TestResult />} />
                 <Route path="/test/:testId/question/:questionIndex" element={<QuestionRouter />} />
+
+                <Route path="/test/:testId/stats" element={<TestStastPage />} />
             </Routes>
         </BrowserRouter>
     );

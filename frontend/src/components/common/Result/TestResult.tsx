@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import api from '../../../api/axios';
 import { getAttemptResults, rateTest, getComments, addComment, getTestDetails, submitReport } from '../../../api/tests';
 import ReportModal from '../../../components/common/ReportModal/ReportModal';
 import AuthorChip from '../../../components/common/Chip/userChip/AuthorChip';
@@ -19,6 +20,9 @@ const TestResult = () => {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [currentReportType, setCurrentReportType] = useState<'test' | 'comment' | null>(null);
     const [currentCommentId, setCurrentCommentId] = useState<number | null>(null);
+    const [isMuted, setIsMuted] = useState(false);
+    const [muteReason, setMuteReason] = useState('');
+    const [muteUntil, setMuteUntil] = useState<string | null>(null);
 
     const commentReportReasons = [
         "Оскорбительное поведение",
@@ -29,6 +33,10 @@ const TestResult = () => {
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         setIsAuthenticated(!!token);
+        
+        if (token) {
+            checkMuteStatus();
+        }
         
         const state = location.state as any;
         if (state?.attemptId) {
@@ -44,6 +52,17 @@ const TestResult = () => {
             loadTestDetails();
         }
     }, [testId]);
+
+    const checkMuteStatus = async () => {
+        try {
+            const profile = await api.get('/auth/profile/');
+            setIsMuted(profile.data.is_muted || false);
+            setMuteReason(profile.data.mute_reason || '');
+            setMuteUntil(profile.data.mute_until);
+        } catch (error) {
+            console.error('Ошибка проверки мута:', error);
+        }
+    };
 
     const loadComments = async () => {
         try {
@@ -97,6 +116,14 @@ const TestResult = () => {
             return;
         }
         
+        if (isMuted) {
+            let message = 'Вы замучены.';
+            if (muteReason) message += ` Причина: ${muteReason}`;
+            if (muteUntil) message += ` До: ${new Date(muteUntil).toLocaleString()}`;
+            alert(message);
+            return;
+        }
+        
         if (!comment.trim()) return;
         
         try {
@@ -121,7 +148,7 @@ const TestResult = () => {
         setCurrentCommentId(null);
     };
 
-    const handleSubmitReport = async (reason: string) => {
+    const handleSubmitReport = async (reason: string, comment: string) => {
         const token = localStorage.getItem('access_token');
         if (!token) {
             const confirm = window.confirm('Вы не авторизованы. Хотите перейти на страницу входа?');
@@ -135,26 +162,34 @@ const TestResult = () => {
             await submitReport({
                 target_type: currentReportType === 'test' ? 'test' : 'comment',
                 target_id: currentReportType === 'test' ? Number(testId) : currentCommentId!,
-                reason: reason
+                test_id: currentReportType === 'comment' ? Number(testId) : undefined,
+                reason: reason,
+                comment: comment
             });
             alert('Жалоба отправлена');
             closeReportModal();
         } catch (error: any) {
             console.error('Ошибка отправки жалобы:', error);
-            
-            if (error.response?.status === 401) {
-                const confirm = window.confirm('Сессия истекла. Хотите перейти на страницу входа?');
-                if (confirm) {
-                    navigate('/login');
-                }
-            } else {
-                alert(`Ошибка: ${error.response?.data?.error || error.message}`);
-            }
+            alert(`Ошибка: ${error.response?.data?.error || error.message}`);
         }
     };
 
     if (loading) {
-        return <div className={styles.loading}>Загрузка...</div>;
+        return (
+            <div className={styles.testResult}>
+                <div className={styles.loadingContainer}>
+                    <img 
+                        src="http://localhost:8000/media/resultpage/load.jpg" 
+                        alt="Загрузка" 
+                        className={styles.loadingImage}
+                        onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                        }}
+                    />
+                    <div className={styles.loadingText}>ЗАГРУЗКА</div>
+                </div>
+            </div>
+        );
     }
 
     if (!attempt || !test) {
@@ -170,9 +205,14 @@ const TestResult = () => {
     const passingScore = test.passing_score || 70;
     const isSurvey = test.is_survey;
     
-    // Для опроса - всегда "ОПРОС ПРОЙДЕН", без процентов
     const scoreText = isSurvey ? 'ОПРОС ПРОЙДЕН' : (scorePercent >= passingScore ? 'ПРОЙДЕН' : 'НЕ ПРОЙДЕН');
     const typeDisplay = isSurvey ? 'ОПРОС' : 'ТЕСТ';
+
+    const getMuteUntilText = () => {
+        if (!muteUntil) return '';
+        const date = new Date(muteUntil);
+        return date.toLocaleString('ru-RU');
+    };
 
     return (
         <div className={styles.testResult}>
@@ -227,19 +267,29 @@ const TestResult = () => {
                 <span className={styles.commentTitle}>КОММЕНТАРИИ</span>
                 
                 {isAuthenticated && (
-                    <div className={styles.commentForm}>
-                        <span className={styles.formTitle}>оставить комментарий</span>
-                        <form onSubmit={handleSubmitComment}>
-                            <input 
-                                name="comment" 
-                                placeholder="ПРИМЕР: КЛАССНЫЙ ТЕСТ"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                className={styles.commentInput}
-                            />
-                            <button type="submit" className={styles.submitButton}>ОТПРАВИТЬ</button>
-                        </form>
-                    </div>
+                    <>
+                        {isMuted ? (
+                            <div className={styles.mutedMessage}>
+                                <div className={styles.mutedText}>Вы замучены</div>
+                                {muteReason && <div className={styles.mutedReason}>Причина: {muteReason}</div>}
+                                {muteUntil && <div className={styles.mutedUntil}>До: {getMuteUntilText()}</div>}
+                            </div>
+                        ) : (
+                            <div className={styles.commentForm}>
+                                <span className={styles.formTitle}>оставить комментарий</span>
+                                <form onSubmit={handleSubmitComment}>
+                                    <input 
+                                        name="comment" 
+                                        placeholder="ПРИМЕР: КЛАССНЫЙ ТЕСТ"
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className={styles.commentInput}
+                                    />
+                                    <button type="submit" className={styles.submitButton}>ОТПРАВИТЬ</button>
+                                </form>
+                            </div>
+                        )}
+                    </>
                 )}
                 
                 <div className={styles.commentsList}>
